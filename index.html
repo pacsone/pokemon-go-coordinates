@@ -18,12 +18,23 @@
         .container {
             max-width: 500px;
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .main-logo {
+            width: 200px;
+            height: auto;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.15));
         }
         h1 {
             text-align: center;
             font-size: 24px;
             color: #0e8388;
             margin-bottom: 20px;
+            margin-top: 5px;
         }
         /* Accordion Styles */
         .accordion-item {
@@ -32,11 +43,12 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.06);
             overflow: hidden;
+            width: 100%;
         }
         .accordion-header {
             background-color: #2e4f4f;
             color: #ffffff;
-            font-size: 20px;
+            font-size: 19px;
             font-weight: bold;
             padding: 15px;
             cursor: pointer;
@@ -58,6 +70,14 @@
             display: block;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
+        .time-text {
+            font-family: monospace;
+            font-size: 15px;
+            background-color: rgba(255,255,255,0.15);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
         .accordion-header:hover {
             background-color: #243e3e;
         }
@@ -65,6 +85,7 @@
             content: '▼';
             font-size: 12px;
             transition: transform 0.2s;
+            margin-left: 10px;
         }
         .accordion-item.active .accordion-header::after {
             transform: rotate(180deg);
@@ -132,13 +153,15 @@
 <body>
 
 <div class="container">
+    <!-- Pokémon GO Embedded Data URL Logo -->
+    <img class="main-logo" src="https://upload.wikimedia.org/wikipedia/commons/2/23/Pok%C3%A9mon_GO_logo.svg" alt="Pokémon GO Logo">
+
     <h1>Pokémon GO Hotspots</h1>
 
     <!-- PH ACCORDION -->
     <div class="accordion-item">
         <div class="accordion-header">
             <div class="header-title">
-                <!-- Inline Embedded PH Flag -->
                 <svg class="flag-svg" viewBox="0 0 1800 900">
                     <rect width="1800" height="900" fill="#fff"/>
                     <path d="M0,0 L900,450 L0,900 Z" fill="#fff"/>
@@ -152,7 +175,7 @@
                         <circle cx="525" cy="450" r="25"/>
                     </g>
                 </svg>
-                <span>PH</span>
+                <span>PH <span class="time-text" id="time-ph">| --:-- --</span></span>
             </div>
         </div>
         <div class="accordion-content">
@@ -179,12 +202,11 @@
     <div class="accordion-item">
         <div class="accordion-header">
             <div class="header-title">
-                <!-- Inline Embedded JP Flag -->
                 <svg class="flag-svg" viewBox="0 0 900 600">
                     <rect width="900" height="600" fill="#fff"/>
                     <circle cx="450" cy="300" r="180" fill="#bc002d"/>
                 </svg>
-                <span>JP</span>
+                <span>JP <span class="time-text" id="time-jp">| --:-- --</span></span>
             </div>
         </div>
         <div class="accordion-content">
@@ -211,14 +233,13 @@
     <div class="accordion-item">
         <div class="accordion-header">
             <div class="header-title">
-                <!-- Inline Embedded BR Flag -->
                 <svg class="flag-svg" viewBox="0 0 720 504">
                     <rect width="720" height="504" fill="#009c3b"/>
                     <path d="M360,36 L684,252 L360,468 L36,252 Z" fill="#ffdf00"/>
                     <circle cx="360" cy="252" r="122" fill="#002277"/>
                     <path d="M242,260 Q360,210 478,264 Q360,220 242,260 Z" fill="#ffffff"/>
                 </svg>
-                <span>BR</span>
+                <span>BR <span class="time-text" id="time-br">| --:-- --</span></span>
             </div>
         </div>
         <div class="accordion-content">
@@ -286,6 +307,27 @@
 </div>
 
 <script>
+// Live Clocks Script based on real IANA Time Zones
+function updateClocks() {
+    const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+    
+    // Manila, PH Time
+    const timePH = new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'Asia/Manila' });
+    document.getElementById('time-ph').innerText = "| " + timePH;
+
+    // Tokyo, JP Time
+    const timeJP = new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'Asia/Tokyo' });
+    document.getElementById('time-jp').innerText = "| " + timeJP;
+
+    // Sao Paulo, BR Time
+    const timeBR = new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'America/Sao_Paulo' });
+    document.getElementById('time-br').innerText = "| " + timeBR;
+}
+
+// Run clocks immediately and refresh every second
+setInterval(updateClocks, 1000);
+updateClocks();
+
 // Accordion Logic to open only one at a time
 document.querySelectorAll('.accordion-header').forEach(header => {
     header.addEventListener('click', () => {
