@@ -10,8 +10,9 @@
             --bg-image: url('https://lh3.googleusercontent.com/PWSt8OX5qG416x9n9SAfktLM_n_CbEVCSo9_V4OKdnaOlN_veHLikyOEHqlDOAZqHwFsrAdMXH_dOzyf8l-jsX_5pQq1hR4DEQ=e365-pa-nu-w2880-rw');
             --logo-image: url('https://upload.wikimedia.org/wikipedia/commons/2/23/Pok%C3%A9mon_GO_logo.svg');
             
-            /* Theme Colors managed via root variables */
-            --bg-color-container: #f0f2f5;
+            /* Container configured to exactly 60% transparency */
+            --bg-color-container: rgba(240, 242, 245, 0.60);
+            
             --accordion-header-bg: #2e4f4f;
             --accordion-header-hover: #243e3e;
             --btn-copy-bg: #0084ff;
@@ -49,6 +50,10 @@
             box-sizing: border-box;
             margin-top: 40px;
             margin-bottom: 40px;
+
+            /* Frosted glass blur effect behind the 60% transparency layout */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
         .main-logo {
             width: 200px;
