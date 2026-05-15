@@ -51,12 +51,12 @@
             align-items: center;
             gap: 14px;
         }
-        .flag-icon {
+        .flag-svg {
             width: 32px;
-            height: auto;
-            border-radius: 4px;
+            height: 22px;
+            border-radius: 3px;
             display: block;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
         .accordion-header:hover {
             background-color: #243e3e;
@@ -138,7 +138,20 @@
     <div class="accordion-item">
         <div class="accordion-header">
             <div class="header-title">
-                <img class="flag-icon" src="https://cloudflare.com" alt="PH Flag">
+                <!-- Inline Embedded PH Flag -->
+                <svg class="flag-svg" viewBox="0 0 1800 900">
+                    <rect width="1800" height="900" fill="#fff"/>
+                    <path d="M0,0 L900,450 L0,900 Z" fill="#fff"/>
+                    <path d="M0,0 L1800,0 L1800,450 L900,450 Z" fill="#0038a8"/>
+                    <path d="M0,900 L1800,900 L1800,450 L900,450 Z" fill="#ce1126"/>
+                    <path d="M0,0 L900,450 L0,900 Z" fill="#fff"/>
+                    <circle cx="300" cy="450" r="90" fill="#fcd116"/>
+                    <g fill="#fcd116">
+                        <circle cx="300" cy="225" r="25"/>
+                        <circle cx="300" cy="675" r="25"/>
+                        <circle cx="525" cy="450" r="25"/>
+                    </g>
+                </svg>
                 <span>PH</span>
             </div>
         </div>
@@ -166,7 +179,11 @@
     <div class="accordion-item">
         <div class="accordion-header">
             <div class="header-title">
-                <img class="flag-icon" src="https://cloudflare.com" alt="JP Flag">
+                <!-- Inline Embedded JP Flag -->
+                <svg class="flag-svg" viewBox="0 0 900 600">
+                    <rect width="900" height="600" fill="#fff"/>
+                    <circle cx="450" cy="300" r="180" fill="#bc002d"/>
+                </svg>
                 <span>JP</span>
             </div>
         </div>
@@ -194,7 +211,13 @@
     <div class="accordion-item">
         <div class="accordion-header">
             <div class="header-title">
-                <img class="flag-icon" src="https://cloudflare.com" alt="BR Flag">
+                <!-- Inline Embedded BR Flag -->
+                <svg class="flag-svg" viewBox="0 0 720 504">
+                    <rect width="720" height="504" fill="#009c3b"/>
+                    <path d="M360,36 L684,252 L360,468 L36,252 Z" fill="#ffdf00"/>
+                    <circle cx="360" cy="252" r="122" fill="#002277"/>
+                    <path d="M242,260 Q360,210 478,264 Q360,220 242,260 Z" fill="#ffffff"/>
+                </svg>
                 <span>BR</span>
             </div>
         </div>
