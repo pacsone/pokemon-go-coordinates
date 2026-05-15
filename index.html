@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brazil Pokémon GO Hotspots</title>
+    <title>Pokémon GO Hotspots</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -25,23 +25,73 @@
             color: #0e8388;
             margin-bottom: 20px;
         }
-        .category {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 25px 0 10px 5px;
-            color: #2e4f4f;
-            border-bottom: 2px solid #cbe4de;
-            padding-bottom: 5px;
+        /* Accordion Styles */
+        .accordion-item {
+            background-color: #ffffff;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            overflow: hidden;
         }
+        .accordion-header {
+            background-color: #2e4f4f;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .flag-icon {
+            width: 32px;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .accordion-header:hover {
+            background-color: #243e3e;
+        }
+        .accordion-header::after {
+            content: '▼';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        .accordion-item.active .accordion-header::after {
+            transform: rotate(180deg);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+        }
+        .content-padding {
+            padding: 15px;
+        }
+        /* Card Styles */
         .card {
             background: #ffffff;
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 15px;
             margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e4e6eb;
             display: flex;
             flex-direction: column;
             gap: 8px;
+        }
+        .card:last-child {
+            margin-bottom: 0;
         }
         .location-name {
             font-weight: 600;
@@ -49,7 +99,7 @@
         }
         .coords {
             font-family: monospace;
-            background-color: #f7f9fa;
+            background-color: #f1f3f5;
             padding: 8px;
             border-radius: 6px;
             border: 1px solid #e4e6eb;
@@ -58,16 +108,15 @@
         }
         .btn-group {
             display: flex;
-            gap: 10px;
             margin-top: 5px;
         }
         button {
             flex: 1;
             border: none;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             transition: background 0.2s;
         }
@@ -78,106 +127,164 @@
         .btn-copy:hover {
             background-color: #0066cc;
         }
-        .btn-map {
-            background-color: #e4e6eb;
-            color: #050505;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-map:hover {
-            background-color: #d8dadf;
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🇧🇷 Pokémon GO Hotspots</h1>
+    <h1>Pokémon GO Hotspots</h1>
 
-    <!-- SÃO PAULO -->
-    <div class="category">📌 São Paulo Hotspots</div>
-    
-    <div class="card">
-        <div class="location-name">📍 Ibirapuera Park (Main Loop)</div>
-        <div class="coords" id="c1">-23.587416, -46.657633</div>
-        <div class="btn-group">
-            <button class="btn-copy" onclick="copyCoords('c1', this)">Copy Coords</button>
-            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+    <!-- PH ACCORDION -->
+    <div class="accordion-item">
+        <div class="accordion-header">
+            <div class="header-title">
+                <img class="flag-icon" src="https://cloudflare.com" alt="PH Flag">
+                <span>PH</span>
+            </div>
+        </div>
+        <div class="accordion-content">
+            <div class="content-padding">
+                <div class="card">
+                    <div class="location-name">📍 Rizal Park (Luneta, Manila)</div>
+                    <div class="coords" id="ph1">14.5826, 120.9787</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('ph1', this)">Copy Coords</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="location-name">📍 Quezon Memorial Circle</div>
+                    <div class="coords" id="ph2">14.6515, 121.0494</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('ph2', this)">Copy Coords</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="card">
-        <div class="location-name">📍 Paulista Avenue (Masp)</div>
-        <div class="coords" id="c2">-23.561502, -46.655952</div>
-        <div class="btn-group">
-            <button class="btn-copy" onclick="copyCoords('c2', this)">Copy Coords</button>
-            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+    <!-- JP ACCORDION -->
+    <div class="accordion-item">
+        <div class="accordion-header">
+            <div class="header-title">
+                <img class="flag-icon" src="https://cloudflare.com" alt="JP Flag">
+                <span>JP</span>
+            </div>
+        </div>
+        <div class="accordion-content">
+            <div class="content-padding">
+                <div class="card">
+                    <div class="location-name">📍 Shinjuku Station (Tokyo)</div>
+                    <div class="coords" id="jp1">35.6909, 139.7003</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('jp1', this)">Copy Coords</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="location-name">📍 Tsuruma Park (Nagoya Pokeball Park)</div>
+                    <div class="coords" id="jp2">35.1558, 136.9213</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('jp2', this)">Copy Coords</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="card">
-        <div class="location-name">📍 Parque Villa-Lobos</div>
-        <div class="coords" id="c3">-23.546413, -46.724773</div>
-        <div class="btn-group">
-            <button class="btn-copy" onclick="copyCoords('c3', this)">Copy Coords</button>
-            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+    <!-- BR ACCORDION -->
+    <div class="accordion-item">
+        <div class="accordion-header">
+            <div class="header-title">
+                <img class="flag-icon" src="https://cloudflare.com" alt="BR Flag">
+                <span>BR</span>
+            </div>
+        </div>
+        <div class="accordion-content">
+            <div class="content-padding">
+                <div class="card">
+                    <div class="location-name">📍 Ibirapuera Park (Main Loop)</div>
+                    <div class="coords" id="br1">-23.587416, -46.657633</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('br1', this)">Copy Coords</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="location-name">📍 Paulista Avenue (Masp)</div>
+                    <div class="coords" id="br2">-23.561502, -46.655952</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('br2', this)">Copy Coords</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="location-name">📍 Parque Villa-Lobos</div>
+                    <div class="coords" id="br3">-23.546413, -46.724773</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('br3', this)">Copy Coords</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="location-name">📍 Consolação Cemetery</div>
+                    <div class="coords" id="br4">-23.548480, -46.656041</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('br4', this)">Copy Coords</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="location-name">📍 Farroupilha Park (Redenção)</div>
+                    <div class="coords" id="br5">-30.038148, -51.219213</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('br5', this)">Copy Coords</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="location-name">📍 Marinha do Brasil Park</div>
+                    <div class="coords" id="br6">-30.053896, -51.229158</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('br6', this)">Copy Coords</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="location-name">📍 Santos Beachfront Garden</div>
+                    <div class="coords" id="br7">-23.970221, -46.327599</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('br7', this)">Copy Coords</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="location-name">📍 Curitiba Botanical Garden</div>
+                    <div class="coords" id="br8">-25.442996, -49.239634</div>
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyCoords('br8', this)">Copy Coords</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="card">
-        <div class="location-name">📍 Consolação Cemetery</div>
-        <div class="coords" id="c4">-23.548480, -46.656041</div>
-        <div class="btn-group">
-            <button class="btn-copy" onclick="copyCoords('c4', this)">Copy Coords</button>
-            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
-        </div>
-    </div>
-
-    <!-- PORTO ALEGRE -->
-    <div class="category">📌 Porto Alegre Hotspots</div>
-
-    <div class="card">
-        <div class="location-name">📍 Farroupilha Park (Redenção)</div>
-        <div class="coords" id="c5">-30.038148, -51.219213</div>
-        <div class="btn-group">
-            <button class="btn-copy" onclick="copyCoords('c5', this)">Copy Coords</button>
-            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="location-name">📍 Marinha do Brasil Park</div>
-        <div class="coords" id="c6">-30.053896, -51.229158</div>
-        <div class="btn-group">
-            <button class="btn-copy" onclick="copyCoords('c6', this)">Copy Coords</button>
-            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
-        </div>
-    </div>
-
-    <!-- REGIONAL -->
-    <div class="category">📌 Coastal & Regional Hotspots</div>
-
-    <div class="card">
-        <div class="location-name">📍 Santos Beachfront Garden</div>
-        <div class="coords" id="c7">-23.970221, -46.327599</div>
-        <div class="btn-group">
-            <button class="btn-copy" onclick="copyCoords('c7', this)">Copy Coords</button>
-            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="location-name">📍 Curitiba Botanical Garden</div>
-        <div class="coords" id="c8">-25.442996, -49.239634</div>
-        <div class="btn-group">
-            <button class="btn-copy" onclick="copyCoords('c8', this)">Copy Coords</button>
-            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
-        </div>
-    </div>
 </div>
 
 <script>
+// Accordion Logic to open only one at a time
+document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const currentItem = header.parentElement;
+        const content = currentItem.querySelector('.accordion-content');
+        const isOpen = currentItem.classList.contains('active');
+
+        // Close all items first
+        document.querySelectorAll('.accordion-item').forEach(item => {
+            item.classList.remove('active');
+            item.querySelector('.accordion-content').style.maxHeight = null;
+        });
+
+        // If the clicked item was not open, open it
+        if (!isOpen) {
+            currentItem.classList.add('active');
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    });
+});
+
+// Copying Logic
 function copyCoords(id, button) {
     const text = document.getElementById(id).innerText;
     navigator.clipboard.writeText(text).then(() => {
