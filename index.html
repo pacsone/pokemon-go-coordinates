@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brazil Pokémon GO Hotspots</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            color: #0e8388;
+            margin-bottom: 20px;
+        }
+        .category {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 25px 0 10px 5px;
+            color: #2e4f4f;
+            border-bottom: 2px solid #cbe4de;
+            padding-bottom: 5px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .location-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .coords {
+            font-family: monospace;
+            background-color: #f7f9fa;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #e4e6eb;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        button {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-copy {
+            background-color: #0084ff;
+            color: white;
+        }
+        .btn-copy:hover {
+            background-color: #0066cc;
+        }
+        .btn-map {
+            background-color: #e4e6eb;
+            color: #050505;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-map:hover {
+            background-color: #d8dadf;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🇧🇷 Pokémon GO Hotspots</h1>
+
+    <!-- SÃO PAULO -->
+    <div class="category">📌 São Paulo Hotspots</div>
+    
+    <div class="card">
+        <div class="location-name">📍 Ibirapuera Park (Main Loop)</div>
+        <div class="coords" id="c1">-23.587416, -46.657633</div>
+        <div class="btn-group">
+            <button class="btn-copy" onclick="copyCoords('c1', this)">Copy Coords</button>
+            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="location-name">📍 Paulista Avenue (Masp)</div>
+        <div class="coords" id="c2">-23.561502, -46.655952</div>
+        <div class="btn-group">
+            <button class="btn-copy" onclick="copyCoords('c2', this)">Copy Coords</button>
+            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="location-name">📍 Parque Villa-Lobos</div>
+        <div class="coords" id="c3">-23.546413, -46.724773</div>
+        <div class="btn-group">
+            <button class="btn-copy" onclick="copyCoords('c3', this)">Copy Coords</button>
+            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="location-name">📍 Consolação Cemetery</div>
+        <div class="coords" id="c4">-23.548480, -46.656041</div>
+        <div class="btn-group">
+            <button class="btn-copy" onclick="copyCoords('c4', this)">Copy Coords</button>
+            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+        </div>
+    </div>
+
+    <!-- PORTO ALEGRE -->
+    <div class="category">📌 Porto Alegre Hotspots</div>
+
+    <div class="card">
+        <div class="location-name">📍 Farroupilha Park (Redenção)</div>
+        <div class="coords" id="c5">-30.038148, -51.219213</div>
+        <div class="btn-group">
+            <button class="btn-copy" onclick="copyCoords('c5', this)">Copy Coords</button>
+            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="location-name">📍 Marinha do Brasil Park</div>
+        <div class="coords" id="c6">-30.053896, -51.229158</div>
+        <div class="btn-group">
+            <button class="btn-copy" onclick="copyCoords('c6', this)">Copy Coords</button>
+            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+        </div>
+    </div>
+
+    <!-- REGIONAL -->
+    <div class="category">📌 Coastal & Regional Hotspots</div>
+
+    <div class="card">
+        <div class="location-name">📍 Santos Beachfront Garden</div>
+        <div class="coords" id="c7">-23.970221, -46.327599</div>
+        <div class="btn-group">
+            <button class="btn-copy" onclick="copyCoords('c7', this)">Copy Coords</button>
+            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="location-name">📍 Curitiba Botanical Garden</div>
+        <div class="coords" id="c8">-25.442996, -49.239634</div>
+        <div class="btn-group">
+            <button class="btn-copy" onclick="copyCoords('c8', this)">Copy Coords</button>
+            <a class="btn-map" href="https://google.com" target="_blank"><button style="background:none; border:none; padding:0; font-weight:bold; cursor:pointer;">Open Map</button></a>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyCoords(id, button) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.innerText;
+        button.innerText = "Copied! ✓";
+        button.style.backgroundColor = "#4cd137";
+        setTimeout(() => {
+            button.innerText = originalText;
+            button.style.backgroundColor = "#0084ff";
+        }, 1500);
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+    });
+}
+</script>
+
+</body>
+</html>
