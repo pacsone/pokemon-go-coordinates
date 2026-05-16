@@ -300,7 +300,7 @@
     </div>
 </div>
 
-<!-- ADMIN MANAGEMENT PANEL (SECURED & SYNCED TO GIST) -->
+<!-- ADMIN MANAGEMENT PANEL -->
 <div class="admin-panel" id="dashboard-panel">
     <h2>🛠️ Live Cloud Dashboard Manager</h2>
     <div class="form-group">
@@ -323,11 +323,9 @@
 </div>
 
 <script>
-// ⚠️ 1. PASTE YOUR GIST ID ONLY HERE (Look at your Gist URL, copy the string of numbers/letters right after your username)
-const GIST_ID = "2328a8e8f75dec3bb570d9c51d64a75d"; 
+// ⚠️ PASTE YOUR COPIED GIST ID BETWEEN THE QUOTES BELOW (Look at your Gist URL, copy the string of characters at the end)
+const GIST_ID = "PASTE_YOUR_GIST_ID_HERE"; 
 
-// Automated API paths
-const GIST_GET_URL = `https://githubusercontent.com{GIST_ID}/hotspots.json`;
 const GIST_API_URL = `https://github.com{GIST_ID}`;
 
 let globalHotspotsArray = [];
@@ -336,14 +334,19 @@ let isAdminMode = userGithubToken !== "";
 
 async function loadCloudLocations() {
     try {
-        // Prevent browser caching to load real-time edits instantly
-        const response = await fetch(`${GIST_GET_URL}?t=${new Date().getTime()}`);
+        const response = await fetch(GIST_API_URL);
         if (!response.ok) throw new Error("Offline");
-        globalHotspotsArray = await response.json();
+        const gistData = await response.json();
+        
+        // Pull and parse the content directly from hotspots.json inside the Gist payload
+        const rawContent = gistData.files["hotspots.json"].content;
+        globalHotspotsArray = JSON.parse(rawContent);
+        
         renderLayoutElements();
         document.getElementById('loading-status').style.display = 'none';
     } catch (error) {
         document.getElementById('loading-status').innerText = "⚠️ Could not sync live server data!";
+        console.error(error);
     }
 }
 
@@ -401,7 +404,7 @@ async function syncDataToGithubGist() {
             })
         });
 
-        if(!response.ok) throw new Error("Token expired or unauthorized");
+        if(!response.ok) throw new Error("Sync failed");
         alert("Success! Coordinates successfully updated across the global cloud framework.");
         location.reload();
     } catch (error) {
@@ -412,17 +415,19 @@ async function syncDataToGithubGist() {
 }
 
 function addLocationToCloud() {
+    if (!isAdminMode) return;
     const country = document.getElementById('input-country').value;
     const name = document.getElementById('input-name').value.trim();
     const coords = document.getElementById('input-coords').value.trim();
 
-    if(!name || !coords) { alert("Please input name and cords."); return; }
+    if(!name || !coords) { alert("Please input name and coords."); return; }
 
     globalHotspotsArray.push({ country, name, coords });
     syncDataToGithubGist();
 }
 
 function deleteLocationFromCloud(index) {
+    if (!isAdminMode) return;
     if(confirm("Permanently delete this item for everyone in the chat?")) {
         globalHotspotsArray.splice(index, 1);
         syncDataToGithubGist();
