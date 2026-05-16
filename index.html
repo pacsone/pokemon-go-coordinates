@@ -258,7 +258,7 @@
                         <circle cx="300" cy="225" r="25"/><circle cx="300" cy="675" r="25"/><circle cx="525" cy="450" r="25"/>
                     </g>
                 </svg>
-                <span>Philippines</span> <span class="time-text" id="time-ph">--:--</span>
+                <span>PH</span> <span class="time-text" id="time-ph">--:--</span>
             </div>
         </div>
         <div class="accordion-content">
@@ -274,14 +274,32 @@
                     <rect width="900" height="600" fill="#fff"/>
                     <circle cx="450" cy="300" r="180" fill="#bc002d"/>
                 </svg>
-                <span>Japan</span> <span class="time-text" id="time-jp">--:--</span>
+                <span>JP</span> <span class="time-text" id="time-jp">--:--</span>
             </div>
         </div>
         <div class="accordion-content">
             <div class="content-padding" id="list-jp"></div>
         </div>
     </div>
-
+    
+<!-- AE (DUBAI) ACCORDION -->
+    <div class="accordion-item" id="item-ae">
+        <div class="accordion-header">
+            <div class="header-title">
+                <svg class="flag-svg" viewBox="0 0 600 300">
+                    <rect width="600" height="300" fill="#fff"/>
+                    <rect width="600" height="100" fill="#00732f"/>
+                    <rect y="200" width="600" height="100" fill="#000000"/>
+                    <rect width="150" height="300" fill="#ff0000"/>
+                </svg>
+                <span>Dubai (UAE)</span> <span class="time-text" id="time-ae">| --:--</span>
+            </div>
+        </div>
+        <div class="accordion-content">
+            <div class="content-padding" id="list-ae"></div>
+        </div>
+    </div>
+    
     <!-- BR ACCORDION -->
     <div class="accordion-item" id="item-br">
         <div class="accordion-header">
@@ -291,7 +309,7 @@
                     <path d="M360,36 L684,252 L360,468 L36,252 Z" fill="#ffdf00"/>
                     <circle cx="360" cy="252" r="133.2" fill="#002171"/>
                 </svg>
-                <span>Brazil</span> <span class="time-text" id="time-br">--:--</span>
+                <span>BR</span> <span class="time-text" id="time-br">--:--</span>
             </div>
         </div>
         <div class="accordion-content">
@@ -308,6 +326,7 @@
         <select id="input-country">
             <option value="ph">Philippines (PH)</option>
             <option value="jp">Japan (JP)</option>
+            <option value="ae">Dubai (UAE)</option>
             <option value="br">Brazil (BR)</option>
         </select>
     </div>
@@ -378,7 +397,7 @@ async function loadCloudLocations() {
 
 // Memory-safe layout rendering framework
 function renderLayoutElements() {
-    const targets = ['ph', 'jp', 'br'];
+    const targets = ['ph', 'jp', 'ae','br'];
     targets.forEach(lang => {
         const el = document.getElementById(`list-${lang}`);
         if (el) el.innerHTML = '';
@@ -490,6 +509,7 @@ function deleteLocationFromCloud(index) {
 const clockConfigs = [
     { id: 'time-ph', zone: 'Asia/Manila' },
     { id: 'time-jp', zone: 'Asia/Tokyo' },
+    { id: 'time-ae', zone: 'Asia/Dubai' },
     { id: 'time-br', zone: 'America/Sao_Paulo' }
 ];
 
