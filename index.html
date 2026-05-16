@@ -6,8 +6,8 @@
     <title>Pokémon GO Hotspots</title>
     <style>
         :root {
-            --bg-image: url('https://googleusercontent.com');
-            --logo-image: url('https://wikimedia.org');
+            --bg-image: url('https://lh3.googleusercontent.com/PWSt8OX5qG416x9n9SAfktLM_n_CbEVCSo9_V4OKdnaOlN_veHLikyOEHqlDOAZqHwFsrAdMXH_dOzyf8l-jsX_5pQq1hR4DEQ=e365-pa-nu-w2880-rw');
+            --logo-image: url('https://upload.wikimedia.org/wikipedia/commons/2/23/Pok%C3%A9mon_GO_logo.svg');
             --bg-color-container: rgba(240, 242, 245, 0.60);
             --accordion-header-bg: #2e4f4f;
             --accordion-header-hover: #243e3e;
@@ -323,7 +323,7 @@
 </div>
 
 <script>
-// Fixed Configuration Elements
+// Your Verified 32-Character Gist Database String
 const GIST_ID = "2328a8e8f75dec3bb570d9c51d64a75d"; 
 const GIST_RAW_URL = "https://githubusercontent.com";
 const GIST_API_URL = `https://github.com{GIST_ID}`;
@@ -334,7 +334,7 @@ let isAdminMode = userGithubToken !== "";
 
 async function loadCloudLocations() {
     try {
-        // Loads seamlessly directly via the static raw URL link, avoiding CORS security blocks
+        // Loads via your secure direct raw path link, bypassing cross-origin safety blocks
         const response = await fetch(`${GIST_RAW_URL}?t=${new Date().getTime()}`);
         if (!response.ok) throw new Error("Offline");
         globalHotspotsArray = await response.json();
