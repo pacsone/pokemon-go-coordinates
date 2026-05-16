@@ -61,7 +61,6 @@
             filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.15));
             content: var(--logo-image); 
         }
-        /* New Plus Key Icon Trigger Button Style */
         .panel-trigger {
             position: absolute;
             top: 10px;
@@ -174,8 +173,9 @@
         .btn-copy:hover { background-color: var(--btn-copy-hover); }
         .status-msg { text-align: center; font-size: 14px; color: #666; margin-bottom: 10px; }
         
+        /* Delete buttons hidden by default from players */
         .btn-delete {
-            display: flex; 
+            display: none; 
             position: absolute;
             top: 12px;
             right: 12px;
@@ -191,7 +191,7 @@
             justify-content: center;
         }
 
-        /* Admin Management Panel - Modified for toggle slide */
+        /* Admin Management Panel - Slide-toggle dashboard style */
         .admin-panel {
             display: none; 
             max-width: 500px;
@@ -231,34 +231,9 @@
             padding: 12px;
             font-size: 15px;
             margin-top: 5px;
-            margin-bottom: 15px;
         }
         .btn-add:hover { background-color: #243e3e; }
-        
-        .btn-export {
-            background-color: #4cd137;
-            color: white;
-            width: 100%;
-            padding: 12px;
-            font-size: 15px;
-        }
-        .btn-export:hover { background-color: #3cb02a; }
-        
-        .code-box-area {
-            display: none;
-            margin-top: 15px;
-        }
-        .code-box-area textarea {
-            width: 100%;
-            height: 150px;
-            font-family: monospace;
-            font-size: 11px;
-            padding: 10px;
-            box-sizing: border-box;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            background: #f8f9fa;
-        }
+        .btn-add:disabled { background-color: #cccccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -266,10 +241,10 @@
 <div class="container">
     <div class="logo-area">
         <img class="main-logo" alt="Pokémon GO Logo">
-        <!-- New Trigger Plus Key Button Icon -->
         <button class="panel-trigger" onclick="toggleAdminPanel()" title="Toggle Manager Form">➕</button>
     </div>
     <h1>Pokémon GO Hotspots</h1>
+    <div id="loading-status" class="status-msg">Loading latest live pins...</div>
 
     <!-- PH ACCORDION -->
     <div class="accordion-item" id="item-ph">
@@ -290,7 +265,7 @@
             </div>
         </div>
         <div class="accordion-content">
-            <div class="content-padding" id="list-ph"></div>
+            <div class="content-padding" id="list-ph">No pins loaded.</div>
         </div>
     </div>
 
@@ -306,7 +281,7 @@
             </div>
         </div>
         <div class="accordion-content">
-            <div class="content-padding" id="list-jp"></div>
+            <div class="content-padding" id="list-jp">No pins loaded.</div>
         </div>
     </div>
 
@@ -324,14 +299,14 @@
             </div>
         </div>
         <div class="accordion-content">
-            <div class="content-padding" id="list-br"></div>
+            <div class="content-padding" id="list-br">No pins loaded.</div>
         </div>
     </div>
 </div>
 
-<!-- TOGGLE MANAGER PANEL -->
+<!-- AUTOMATED CLOUD SYNC ADMIN PANEL -->
 <div class="admin-panel" id="dashboard-panel">
-    <h2>🛠️ Location Dashboard Manager</h2>
+    <h2>🛠️ Live Cloud Dashboard Manager</h2>
     <div class="form-group">
         <label for="input-country">Select Country</label>
         <select id="input-country">
@@ -348,55 +323,68 @@
         <label for="input-coords">Coordinates</label>
         <input type="text" id="input-coords" placeholder="e.g. 14.5826, 120.9787">
     </div>
-    <button class="btn-add" onclick="addCustomLocation()">1. Add to Menu</button>
-    <button class="btn-export" onclick="exportPermanentCode()">2. Save for Everyone (Get Code)</button>
-    
-    <div class="code-box-area" id="code-box-wrapper">
-        <p style="font-size: 13px; font-weight: bold; color: #2e4f4f; margin-bottom: 5px;">👇 Copy this code and paste it over your index.html on GitHub:</p>
-        <textarea id="output-code-box" readonly onclick="this.select()"></textarea>
-    </div>
+    <button class="btn-add" id="submit-btn" onclick="addLocationToCloud()">Save Directly to Cloud Website</button>
 </div>
 
 <script>
-// --- MASTER FIXED LIST COMPILING ARRAY HOOKS ---
-const initialDataArray = [
-    { country: 'ph', name: '📍 Rizal Park (Luneta, Manila)', coords: '14.5826, 120.9787' },
-    { country: 'ph', name: '📍 Quezon Memorial Circle', coords: '14.6515, 121.0494' },
-    { country: 'jp', name: '📍 Shinjuku Station (Tokyo)', coords: '35.6909, 139.7003' },
-    { country: 'jp', name: '📍 Tsuruma Park (Nagoya)', coords: '35.1558, 136.9213' },
-    { country: 'br', name: '📍 Ibirapuera Park (Main Loop)', coords: '-23.587416, -46.657633' },
-    { country: 'br', name: '📍 Paulista Avenue (Masp)', coords: '-23.561502, -46.655952' },
-    { country: 'br', name: '📍 Parque Villa-Lobos', coords: '-23.546413, -46.724773' },
-    { country: 'br', name: '📍 Consolação Cemetery', coords: '-23.548480, -46.656041' },
-    { country: 'br', name: '📍 Farroupilha Park (Redenção)', coords: '-30.038148, -51.219213' },
-    { country: 'br', name: '📍 Marinha do Brasil Park', coords: '-30.053896, -51.229158' },
-    { country: 'br', name: '📍 Santos Beachfront Garden', coords: '-23.970221, -46.327599' },
-    { country: 'br', name: '📍 Curitiba Botanical Garden', coords: '-25.442996, -49.239634' }
-];
+// Your Verified 32-Character Gist Database String
+const GIST_ID = "2328a8e8f75dec3bb570d9c51d64a75d"; 
+const GIST_RAW_URL = "https://githubusercontent.com";
+const GIST_API_URL = `https://github.com{GIST_ID}`;
 
-let hotspots = JSON.parse(localStorage.getItem('pogo_hotspots')) || initialDataArray;
+let globalHotspotsArray = [];
+let userGithubToken = localStorage.getItem('pogo_admin_token') || "";
+let isAdminMode = userGithubToken !== "";
 
-function renderLocations() {
+async function loadCloudLocations() {
+    try {
+        const response = await fetch(`${GIST_RAW_URL}?t=${new Date().getTime()}`);
+        if (!response.ok) throw new Error("Offline");
+        globalHotspotsArray = await response.json();
+        
+        renderLayoutElements();
+        document.getElementById('loading-status').style.display = 'none';
+    } catch (error) {
+        document.getElementById('loading-status').innerText = "⚠️ Could not sync live server data!";
+        console.error(error);
+    }
+}
+
+function renderLayoutElements() {
     ['ph', 'jp', 'br'].forEach(lang => document.getElementById(`list-${lang}`).innerHTML = '');
-    hotspots.forEach((item, index) => {
+    
+    globalHotspotsArray.forEach((item, index) => {
         const uniqueId = `${item.country}-${index}`;
         const cleanName = item.name.startsWith('📍') ? item.name : '📍 ' + item.name;
+        const deleteStyle = isAdminMode ? 'style="display: flex;"' : 'style="display: none;"';
+
         const cardHtml = `
             <div class="card">
                 <div class="location-name">${cleanName}</div>
                 <div class="coords" id="${uniqueId}">${item.coords}</div>
                 <div class="btn-group"><button class="btn-copy" onclick="copyCoords('${uniqueId}', this)">Copy Coords</button></div>
-                <button class="btn-delete" onclick="deleteLocation(${index})">✕</button>
+                <button class="btn-delete" ${deleteStyle} onclick="deleteLocationFromCloud(${index})">✕</button>
             </div>`;
         const container = document.getElementById(`list-${item.country}`);
         if(container) container.innerHTML += cardHtml;
     });
 }
 
-// New Show/Hide Toggle Script for the Plus Key icon button
 function toggleAdminPanel() {
     const panel = document.getElementById('dashboard-panel');
     const triggerBtn = document.querySelector('.panel-trigger');
+    
+    // If you haven't typed your token password key yet, ask for it first
+    if (!isAdminMode) {
+        const token = prompt("Enter your GitHub Personal Access Token (PAT) to activate Admin Customization Panel Mode:");
+        if (token) {
+            localStorage.setItem('pogo_admin_token', token.trim());
+            location.reload();
+        }
+        return;
+    }
+
+    // Smooth sliding toggle behaviors
     if (panel.style.display === 'block') {
         panel.style.display = 'none';
         triggerBtn.innerText = '➕';
@@ -407,48 +395,57 @@ function toggleAdminPanel() {
     }
 }
 
-function addCustomLocation() {
-    const country = document.getElementById('input-country').value;
-    const name = document.getElementById('input-name').value.trim();
-    const coords = document.getElementById('input-coords').value.trim();
-    if (!name || !coords) { alert('Fill out Name and Coords!'); return; }
-    hotspots.push({ country, name, coords });
-    localStorage.setItem('pogo_hotspots', JSON.stringify(hotspots));
-    document.getElementById('input-name').value = '';
-    document.getElementById('input-coords').value = '';
-    renderLocations();
-}
+async function syncDataToGithubGist() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerText = "Syncing Cloud Server... ⏳";
 
-function deleteLocation(index) {
-    if(confirm("Remove this location pin?")) {
-        hotspots.splice(index, 1);
-        localStorage.setItem('pogo_hotspots', JSON.stringify(hotspots));
-        renderLocations();
+    try {
+        const cleanToken = userGithubToken.replace(/['"`\s]/g, '');
+
+        const response = await fetch(GIST_API_URL, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': 'token ' + cleanToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                files: { "hotspots.json": { content: JSON.stringify(globalHotspotsArray, null, 2) } }
+            })
+        });
+
+        if(!response.ok) throw new Error("Sync failed");
+        alert("Success! Coordinates successfully updated across the global cloud framework.");
+        location.reload();
+    } catch (error) {
+        alert("Error syncing to cloud! Double check your GitHub token permissions or tap ➕ to clear storage cache.");
+        localStorage.removeItem('pogo_admin_token'); // Wipes invalid tokens automatically to prevent freeze states
+        location.reload();
     }
 }
 
-function exportPermanentCode() {
-    let currentDoc = document.documentElement.outerHTML;
-    let serializedData = JSON.stringify(hotspots);
-    
-    let pattern = /const initialDataArray = \[\s*[\s\S]*?\];/;
-    let replacement = `const initialDataArray = ${serializedData};`;
-    let finalizedSource = currentDoc.replace(pattern, replacement);
-    
-    // Reset layout states back to closed settings when exported to GitHub code file
-    finalizedSource = "<!DOCTYPE html>\n" + finalizedSource
-        .replace(/style="max-height: [\s\S]*?"/g, '')
-        .replace(/class="accordion-item active"/g, 'class="accordion-item"')
-        .replace(/id="dashboard-panel" style="display: block;"/g, 'id="dashboard-panel" style="display: none;"')
-        .replace(/panel-trigger">➖/g, 'panel-trigger">➕');
+function addLocationToCloud() {
+    if (!isAdminMode) return;
+    const country = document.getElementById('input-country').value;
+    const name = document.getElementById('input-name').value.trim();
+    const coords = document.getElementById('input-coords').value.trim();
 
-    document.getElementById('code-box-wrapper').style.display = 'block';
-    document.getElementById('output-code-box').value = finalizedSource;
-    document.getElementById('output-code-box').select();
-    alert("New permanent file code generated! Copy it from the text box below and save it to index.html on GitHub.");
+    if(!name || !coords) { alert("Please input name and coords."); return; }
+
+    globalHotspotsArray.push({ country, name, coords });
+    syncDataToGithubGist();
 }
 
-// Clocks Script
+function deleteLocationFromCloud(index) {
+    if (!isAdminMode) return;
+    if(confirm("Permanently delete this item for everyone in the chat?")) {
+        globalHotspotsArray.splice(index, 1);
+        syncDataToGithubGist();
+    }
+}
+
+// Live Clocks Script
 function updateClocks() {
     const options = { hour: '2-digit', minute: '2-digit', hour12: true };
     document.getElementById('time-ph').innerText = "| " + new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'Asia/Manila' });
@@ -475,7 +472,8 @@ function copyCoords(id, button) {
         setTimeout(() => { button.innerText = orig; button.style.backgroundColor = "#0084ff"; }, 1500);
     });
 }
-renderLocations();
+
+loadCloudLocations();
 </script>
 </body>
 </html>
