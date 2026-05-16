@@ -7,8 +7,8 @@
 
 <style>
 :root {
-    --bg-image: url('https://lh3.googleusercontent.com/PWSt8OX5qG416x9n9SAfktLM_n_CbEVCSo9_V4OKdnaOlN_veHLikyOEHqlDOAZqHwFsrAdMXH_dOzyf8l-jsX_5pQq1hR4DEQ=e365-pa-nu-w2880-rw');
-    --logo-image: url('https://upload.wikimedia.org/wikipedia/commons/2/23/Pok%C3%A9mon_GO_logo.svg');
+    --bg-image: url('https://googleusercontent.com');
+    --logo-image: url('https://wikimedia.org');
     --bg-color-container: rgba(240, 242, 245, 0.60);
     --accordion-header-bg: #2e4f4f;
     --accordion-header-hover: #243e3e;
@@ -17,7 +17,6 @@
     --text-main: #1c1e21;
 }
 
-/* ✅ YOUR DESIGN 100% UNCHANGED */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--text-main);
@@ -44,30 +43,81 @@ body {
     padding: 20px;
     border-radius: 16px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    box-sizing: border-box;
     margin-top: 40px;
-    margin-bottom: 20px;
     backdrop-filter: blur(8px);
 }
 
-.logo-area { position: relative; width:100%; display:flex; justify-content:center; }
-.main-logo { width:200px; margin-top:10px; margin-bottom:5px; }
-.panel-trigger {
-    position:absolute; top:10px; right:5px;
-    background:none; border:none; cursor:pointer;
+.logo-area {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
-h1 { text-align:center; color:#0e8388; }
 
-.accordion-item { background:#fff; border-radius:12px; margin-bottom:12px; width:100%; }
-.accordion-header { background:var(--accordion-header-bg); color:white; padding:15px; cursor:pointer; display:flex; justify-content:space-between; }
-.accordion-content { max-height:0; overflow:hidden; transition:.3s; }
+.main-logo {
+    width: 200px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
 
-.card { background:#fff; padding:15px; border-radius:8px; margin-bottom:12px; position:relative; }
-.btn-copy { background:var(--btn-copy-bg); color:white; }
-.btn-delete { display:none; position:absolute; top:12px; right:12px; }
+.panel-trigger {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
 
-.admin-panel { display:none; background:#fff; padding:20px; border-radius:16px; max-width:500px; width:100%; }
+h1 {
+    text-align: center;
+    color: #0e8388;
+}
 
+.accordion-item {
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.accordion-header {
+    background: var(--accordion-header-bg);
+    color: white;
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 12px;
+}
+
+.btn-copy {
+    background: var(--btn-copy-bg);
+    color: white;
+    width: 100%;
+    padding: 12px;
+}
+
+.btn-delete {
+    display: none;
+    position: absolute;
+}
+
+.admin-panel {
+    display: none;
+}
 </style>
 </head>
 
@@ -75,7 +125,7 @@ h1 { text-align:center; color:#0e8388; }
 
 <div class="container">
 <div class="logo-area">
-    <img class="main-logo">
+    <img class="main-logo" alt="Pokémon GO Logo">
     <button class="panel-trigger" onclick="toggleAdminPanel()">➕</button>
 </div>
 
@@ -99,145 +149,96 @@ h1 { text-align:center; color:#0e8388; }
 </div>
 
 <div class="admin-panel" id="dashboard-panel">
-<h2>Manager</h2>
-
 <select id="input-country">
 <option value="ph">PH</option>
 <option value="jp">JP</option>
 <option value="br">BR</option>
 </select>
 
-<input id="input-name" placeholder="Name">
-<input id="input-coords" placeholder="Coords">
+<input id="input-name">
+<input id="input-coords">
 
-<button id="submit-btn" onclick="addLocationToCloud()">Save</button>
+<button onclick="addLocationToCloud()">Save</button>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-// ✅ FIX: logo loads properly
+// ✅ FIX LOGO
 const logo = document.querySelector(".main-logo");
-const logoVar = getComputedStyle(document.documentElement)
-.getPropertyValue('--logo-image')
-.replace(/url\(|\)|"|'/g,'');
+const logoURL = getComputedStyle(document.documentElement)
+    .getPropertyValue('--logo-image')
+    .replace(/^url\(["']?/, '')
+    .replace(/["']?\)$/, '');
 
-if (logoVar) logo.src = logoVar;
+if (logo && logoURL) logo.src = logoURL;
 
 // DATA
-const GIST_ID="2328a8e8f75dec3bb570d9c51d64a75d";
 const RAW="https://gist.githubusercontent.com/pacsone/2328a8e8f75dec3bb570d9c51d64a75d/raw/hotspots.json";
-const API=`https://api.github.com/gists/${GIST_ID}`;
 
-let data=[];
-let token=localStorage.getItem('pogo_admin_token')||"";
-let isAdmin=token!=="";
+let data = [];
 
 // LOAD
-async function load(){
-try{
-let r=await fetch(RAW+"?t="+Date.now());
-data=await r.json();
-render();
-document.getElementById('loading-status').style.display="none";
-}catch{
-document.getElementById('loading-status').innerText="Offline!";
-}
-}
+fetch(RAW+"?t="+Date.now())
+.then(r=>r.json())
+.then(json=>{
+    data=json;
+    render();
+    document.getElementById("loading-status").style.display="none";
+})
+.catch(()=>{
+    document.getElementById("loading-status").innerText="Offline";
+});
 
 // RENDER
 function render(){
 ["ph","jp","br"].forEach(c=>{
-let el=document.getElementById("list-"+c);
-if(el) el.innerHTML="";
+    let el=document.getElementById("list-"+c);
+    if(el) el.innerHTML="";
 });
 
-data.forEach((d,i)=>{
-let html=`
-<div class="card">
-<div>${d.name}</div>
-<div id="c${i}">${d.coords}</div>
-<button class="btn-copy" onclick="copyCoords('c${i}',this)">Copy</button>
-<button class="btn-delete" ${isAdmin?'style="display:block"':''}
-onclick="del(${i})">✕</button>
-</div>`;
-let target=document.getElementById("list-"+d.country);
-if(target) target.innerHTML+=html;
+data.forEach((item,i)=>{
+    const name = item.name && item.name.startsWith("📍")
+        ? item.name
+        : "📍 " + (item.name || "");
+
+    let html=`
+    <div class="card">
+        <div>${name}</div>
+        <div id="c${i}">${item.coords}</div>
+        <button class="btn-copy" onclick="copyCoords('c${i}',this)">Copy Coords</button>
+    </div>`;
+    
+    let container=document.getElementById("list-"+item.country);
+    if(container) container.innerHTML+=html;
 });
 }
-
-// ADD
-window.addLocationToCloud=async()=>{
-if(!isAdmin)return;
-
-let c=document.getElementById('input-country').value;
-let n=document.getElementById('input-name').value;
-let co=document.getElementById('input-coords').value;
-
-data.push({country:c,name:n,coords:co});
-sync();
-};
-
-// DELETE
-window.del=(i)=>{
-data.splice(i,1);
-sync();
-}
-
-// SYNC
-async function sync(){
-await fetch(API,{
-method:"PATCH",
-headers:{
-Authorization:"token "+token,
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-files:{'hotspots.json':{content:JSON.stringify(data)}}
-})
-});
-location.reload();
-}
-
-// PANEL
-window.toggleAdminPanel=()=>{
-if(!isAdmin){
-let t=prompt("Token:");
-if(t){localStorage.setItem('pogo_admin_token',t);location.reload();}
-return;
-}
-let p=document.getElementById('dashboard-panel');
-p.style.display=p.style.display==="block"?"none":"block";
-};
 
 // ACCORDION FIX
 document.querySelectorAll(".accordion-header").forEach(h=>{
-h.onclick=()=>{
+h.addEventListener("click",()=>{
 let c=h.nextElementSibling;
 c.style.maxHeight=c.style.maxHeight?null:c.scrollHeight+"px";
-};
+});
 });
 
 // COPY
 window.copyCoords=(id,btn)=>{
 navigator.clipboard.writeText(document.getElementById(id).innerText);
 btn.innerText="Copied!";
-setTimeout(()=>btn.innerText="Copy",1000);
+setTimeout(()=>btn.innerText="Copy Coords",1000);
 };
 
 // CLOCKS
-function clock(id,tz){
-document.getElementById(id).innerText=
-new Date().toLocaleTimeString("en-US",{timeZone:tz});
+function updateClocks(){
+const opt={hour:'2-digit',minute:'2-digit',hour12:true};
+document.getElementById('time-ph').innerText="| "+new Date().toLocaleTimeString('en-US',{...opt,timeZone:'Asia/Manila'});
+document.getElementById('time-jp').innerText="| "+new Date().toLocaleTimeString('en-US',{...opt,timeZone:'Asia/Tokyo'});
+document.getElementById('time-br').innerText="| "+new Date().toLocaleTimeString('en-US',{...opt,timeZone:'America/Sao_Paulo'});
 }
-setInterval(()=>{
-clock('time-ph','Asia/Manila');
-clock('time-jp','Asia/Tokyo');
-clock('time-br','America/Sao_Paulo');
-},1000);
+setInterval(updateClocks,1000);
+updateClocks();
 
-// RUN
-load();
 });
 </script>
 
