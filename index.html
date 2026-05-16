@@ -43,9 +43,15 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             box-sizing: border-box;
             margin-top: 40px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
+        }
+        .logo-area {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
         .main-logo {
             width: 200px;
@@ -55,6 +61,18 @@
             filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.15));
             content: var(--logo-image); 
         }
+        .admin-trigger {
+            position: absolute;
+            top: 10px;
+            right: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.3;
+            transition: opacity 0.2s;
+        }
+        .admin-trigger:hover { opacity: 1; }
         h1 {
             text-align: center;
             font-size: 24px;
@@ -83,11 +101,7 @@
             user-select: none;
             transition: background-color 0.2s;
         }
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+        .header-title { display: flex; align-items: center; gap: 14px; }
         .flag-svg {
             width: 32px;
             height: 22px;
@@ -103,27 +117,21 @@
             border-radius: 4px;
             font-weight: 500;
         }
-        .accordion-header:hover {
-            background-color: var(--accordion-header-hover);
-        }
+        .accordion-header:hover { background-color: var(--accordion-header-hover); }
         .accordion-header::after {
             content: '▼';
             font-size: 12px;
             transition: transform 0.2s;
             margin-left: 10px;
         }
-        .accordion-item.active .accordion-header::after {
-            transform: rotate(180deg);
-        }
+        .accordion-item.active .accordion-header::after { transform: rotate(180deg); }
         .accordion-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
             background-color: #f8f9fa;
         }
-        .content-padding {
-            padding: 15px;
-        }
+        .content-padding { padding: 15px; }
         .card {
             background: #ffffff;
             border-radius: 8px;
@@ -134,14 +142,10 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            position: relative;
         }
-        .card:last-child {
-            margin-bottom: 0;
-        }
-        .location-name {
-            font-weight: 600;
-            font-size: 16px;
-        }
+        .card:last-child { margin-bottom: 0; }
+        .location-name { font-weight: 600; font-size: 16px; padding-right: 30px; }
         .coords {
             font-family: monospace;
             background-color: #f1f3f5;
@@ -151,10 +155,7 @@
             font-size: 14px;
             word-break: break-all;
         }
-        .btn-group {
-            display: flex;
-            margin-top: 5px;
-        }
+        .btn-group { display: flex; margin-top: 5px; }
         button {
             flex: 1;
             border: none;
@@ -165,25 +166,79 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-        .btn-copy {
-            background-color: var(--btn-copy-bg);
-            color: white;
+        .btn-copy { background-color: var(--btn-copy-bg); color: white; }
+        .btn-copy:hover { background-color: var(--btn-copy-hover); }
+        .status-msg { text-align: center; font-size: 14px; color: #666; margin-bottom: 10px; }
+        
+        .btn-delete {
+            display: none; 
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            align-items: center;
+            justify-content: center;
         }
-        .btn-copy:hover {
-            background-color: var(--btn-copy-hover);
+
+        /* Admin Management Panel Styles */
+        .admin-panel {
+            display: none; 
+            max-width: 500px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
         }
-        .status-msg {
-            text-align: center;
+        .admin-panel h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #2e4f4f;
+            border-bottom: 2px solid #e4e6eb;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .form-group label { font-size: 14px; font-weight: 600; }
+        .form-group input, .form-group select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #cccccc;
             font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
         }
+        .btn-add {
+            background-color: #2e4f4f;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            margin-top: 5px;
+        }
+        .btn-add:hover { background-color: #243e3e; }
+        .btn-add:disabled { background-color: #cccccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <img class="main-logo" alt="Pokémon GO Logo">
+    <div class="logo-area">
+        <img class="main-logo" alt="Pokémon GO Logo">
+        <button class="admin-trigger" onclick="promptAdminLogin()" title="Admin Login">🔑</button>
+    </div>
     <h1>Pokémon GO Hotspots</h1>
     <div id="loading-status" class="status-msg">Loading latest live pins...</div>
 
@@ -245,34 +300,132 @@
     </div>
 </div>
 
-<script>
-// ⚠️ PASTE YOUR COPIED RAW GIST URL INSIDE THE QUOTES BELOW:
-const GIST_DATABASE_URL = "https://gist.githubusercontent.com/pacsone/2328a8e8f75dec3bb570d9c51d64a75d/raw/ff8d9df0f82536dbb54e2b276b4558aace4779e6/hotspots.json";
+<!-- ADMIN MANAGEMENT PANEL (SECURED & SYNCED TO GIST) -->
+<div class="admin-panel" id="dashboard-panel">
+    <h2>🛠️ Live Cloud Dashboard Manager</h2>
+    <div class="form-group">
+        <label for="input-country">Select Country</label>
+        <select id="input-country">
+            <option value="ph">PH (Philippines)</option>
+            <option value="jp">JP (Japan)</option>
+            <option value="br">BR (Brazil)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="input-name">Location Name</label>
+        <input type="text" id="input-name" placeholder="e.g. Rizal Park (Manila)">
+    </div>
+    <div class="form-group">
+        <label for="input-coords">Coordinates</label>
+        <input type="text" id="input-coords" placeholder="e.g. 14.5826, 120.9787">
+    </div>
+    <button class="btn-add" id="submit-btn" onclick="addLocationToCloud()">Save Directly to Cloud Website</button>
+</div>
 
-async function fetchAndRenderLocations() {
+<script>
+// ⚠️ 1. PASTE YOUR GIST ID ONLY HERE (Look at your Gist URL, copy the string of numbers/letters right after your username)
+const GIST_ID = "2328a8e8f75dec3bb570d9c51d64a75d"; 
+
+// Automated API paths
+const GIST_GET_URL = `https://githubusercontent.com{GIST_ID}/hotspots.json`;
+const GIST_API_URL = `https://github.com{GIST_ID}`;
+
+let globalHotspotsArray = [];
+let userGithubToken = localStorage.getItem('pogo_admin_token') || "";
+let isAdminMode = userGithubToken !== "";
+
+async function loadCloudLocations() {
     try {
-        const response = await fetch(GIST_DATABASE_URL);
-        if (!response.ok) throw new Error("Database offline");
-        const hotspots = await response.json();
-        
-        ['ph', 'jp', 'br'].forEach(lang => document.getElementById(`list-${lang}`).innerHTML = '');
-        
-        hotspots.forEach((item, index) => {
-            const uniqueId = `${item.country}-${index}`;
-            const cleanName = item.name.startsWith('📍') ? item.name : '📍 ' + item.name;
-            const cardHtml = `
-                <div class="card">
-                    <div class="location-name">${cleanName}</div>
-                    <div class="coords" id="${uniqueId}">${item.coords}</div>
-                    <div class="btn-group"><button class="btn-copy" onclick="copyCoords('${uniqueId}', this)">Copy Coords</button></div>
-                </div>`;
-            const container = document.getElementById(`list-${item.country}`);
-            if(container) container.innerHTML += cardHtml;
-        });
+        // Prevent browser caching to load real-time edits instantly
+        const response = await fetch(`${GIST_GET_URL}?t=${new Date().getTime()}`);
+        if (!response.ok) throw new Error("Offline");
+        globalHotspotsArray = await response.json();
+        renderLayoutElements();
         document.getElementById('loading-status').style.display = 'none';
     } catch (error) {
-        document.getElementById('loading-status').innerText = "⚠️ Error loading live database!";
-        console.error(error);
+        document.getElementById('loading-status').innerText = "⚠️ Could not sync live server data!";
+    }
+}
+
+function renderLayoutElements() {
+    ['ph', 'jp', 'br'].forEach(lang => document.getElementById(`list-${lang}`).innerHTML = '');
+    
+    globalHotspotsArray.forEach((item, index) => {
+        const uniqueId = `${item.country}-${index}`;
+        const cleanName = item.name.startsWith('📍') ? item.name : '📍 ' + item.name;
+        const deleteStyle = isAdminMode ? 'style="display: flex;"' : 'style="display: none;"';
+
+        const cardHtml = `
+            <div class="card">
+                <div class="location-name">${cleanName}</div>
+                <div class="coords" id="${uniqueId}">${item.coords}</div>
+                <div class="btn-group"><button class="btn-copy" onclick="copyCoords('${uniqueId}', this)">Copy Coords</button></div>
+                <button class="btn-delete" ${deleteStyle} onclick="deleteLocationFromCloud(${index})">✕</button>
+            </div>`;
+        const container = document.getElementById(`list-${item.country}`);
+        if(container) container.innerHTML += cardHtml;
+    });
+    if(isAdminMode) document.getElementById('dashboard-panel').style.display = 'block';
+}
+
+function promptAdminLogin() {
+    if(isAdminMode) {
+        if(confirm("Log out of Admin Dashboard mode?")) {
+            localStorage.removeItem('pogo_admin_token');
+            location.reload();
+        }
+        return;
+    }
+    const token = prompt("Enter your GitHub Personal Access Token (PAT) to activate Admin Mode:");
+    if(token) {
+        localStorage.setItem('pogo_admin_token', token.trim());
+        location.reload();
+    }
+}
+
+async function syncDataToGithubGist() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerText = "Syncing Cloud Server... ⏳";
+
+    try {
+        const response = await fetch(GIST_API_URL, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `token ${userGithubToken}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                files: { "hotspots.json": { content: JSON.stringify(globalHotspotsArray, null, 2) } }
+            })
+        });
+
+        if(!response.ok) throw new Error("Token expired or unauthorized");
+        alert("Success! Coordinates successfully updated across the global cloud framework.");
+        location.reload();
+    } catch (error) {
+        alert("Error syncing to cloud! Double check your GitHub token permissions.");
+        btn.disabled = false;
+        btn.innerText = "Save Directly to Cloud Website";
+    }
+}
+
+function addLocationToCloud() {
+    const country = document.getElementById('input-country').value;
+    const name = document.getElementById('input-name').value.trim();
+    const coords = document.getElementById('input-coords').value.trim();
+
+    if(!name || !coords) { alert("Please input name and cords."); return; }
+
+    globalHotspotsArray.push({ country, name, coords });
+    syncDataToGithubGist();
+}
+
+function deleteLocationFromCloud(index) {
+    if(confirm("Permanently delete this item for everyone in the chat?")) {
+        globalHotspotsArray.splice(index, 1);
+        syncDataToGithubGist();
     }
 }
 
@@ -304,7 +457,7 @@ function copyCoords(id, button) {
     });
 }
 
-fetchAndRenderLocations();
+loadCloudLocations();
 </script>
 </body>
 </html>
