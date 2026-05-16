@@ -323,200 +323,144 @@
 </div>
 
 <script>
+// Perfectly fixed database tracking configurations
 const GIST_ID = "2328a8e8f75dec3bb570d9c51d64a75d";
 const GIST_RAW_URL = "https://gist.githubusercontent.com/pacsone/2328a8e8f75dec3bb570d9c51d64a75d/raw/hotspots.json";
 const GIST_API_URL = `https://api.github.com/gists/${GIST_ID}`;
 
-let hotspots = [];
-let token = localStorage.getItem('pogo_admin_token') || "";
-let isAdmin = Boolean(token);
 
-/* =========================
-   LOAD DATA
-========================= */
+let globalHotspotsArray = [];
+let userGithubToken = localStorage.getItem('pogo_admin_token') || "";
+let isAdminMode = userGithubToken !== "";
+
 async function loadCloudLocations() {
     try {
-        const res = await fetch(`${GIST_RAW_URL}?t=${Date.now()}`);
-        if (!res.ok) throw new Error("Fetch failed");
-
-        hotspots = await res.json();
-        render();
-
-        document.getElementById('loading-status').hidden = true;
-    } catch (err) {
-        console.error(err);
-        document.getElementById('loading-status').innerText = "⚠️ Sync failed";
+        const response = await fetch(`${GIST_RAW_URL}?t=${new Date().getTime()}`);
+        if (!response.ok) throw new Error("Offline");
+        globalHotspotsArray = await response.json();
+        
+        renderLayoutElements();
+        document.getElementById('loading-status').style.display = 'none';
+    } catch (error) {
+        document.getElementById('loading-status').innerText = "⚠️ Could not sync live server data!";
+        console.error(error);
     }
 }
 
-/* =========================
-   RENDER
-========================= */
-function render() {
-    const lists = {
-        ph: document.getElementById("list-ph"),
-        jp: document.getElementById("list-jp"),
-        br: document.getElementById("list-br")
-    };
+function renderLayoutElements() {
+    ['ph', 'jp', 'br'].forEach(lang => document.getElementById(`list-${lang}`).innerHTML = '');
+    
+    globalHotspotsArray.forEach((item, index) => {
+        const uniqueId = `${item.country}-${index}`;
+        const cleanName = item.name.startsWith('📍') ? item.name : '📍 ' + item.name;
+        const deleteStyle = isAdminMode ? 'style="display: flex;"' : 'style="display: none;"';
 
-    Object.values(lists).forEach(el => el.innerHTML = "");
-
-    const fragmentMap = {
-        ph: document.createDocumentFragment(),
-        jp: document.createDocumentFragment(),
-        br: document.createDocumentFragment()
-    };
-
-    hotspots.forEach((item, index) => {
-        const container = fragmentMap[item.country];
-        if (!container) return;
-
-        const card = document.createElement("div");
-        card.className = "card";
-        card.dataset.index = index;
-
-        const name = item.name.startsWith('📍') ? item.name : `📍 ${item.name}`;
-
-        card.innerHTML = `
-            <div class="location-name">${name}</div>
-            <div class="coords" id="coord-${index}">${item.coords}</div>
-            <div class="btn-group">
-                <button class="btn-copy" data-id="coord-${index}">Copy</button>
-            </div>
-            ${isAdmin ? `<button class="btn-delete" data-delete="${index}">✕</button>` : ""}
-        `;
-
-        container.appendChild(card);
+        const cardHtml = `
+            <div class="card">
+                <div class="location-name">${cleanName}</div>
+                <div class="coords" id="${uniqueId}">${item.coords}</div>
+                <div class="btn-group"><button class="btn-copy" onclick="copyCoords('${uniqueId}', this)">Copy Coords</button></div>
+                <button class="btn-delete" ${deleteStyle} onclick="deleteLocationFromCloud(${index})">✕</button>
+            </div>`;
+        const container = document.getElementById(`list-${item.country}`);
+        if(container) container.innerHTML += cardHtml;
     });
-
-    Object.keys(lists).forEach(key => lists[key].appendChild(fragmentMap[key]));
-
-    if (isAdmin) document.getElementById('dashboard-panel').hidden = false;
+    if(isAdminMode) document.getElementById('dashboard-panel').style.display = 'block';
 }
 
-/* =========================
-   ADMIN LOGIN
-========================= */
 function promptAdminLogin() {
-    if (isAdmin) {
-        if (confirm("Logout admin mode?")) {
+    if(isAdminMode) {
+        if(confirm("Log out of Admin Dashboard mode?")) {
             localStorage.removeItem('pogo_admin_token');
             location.reload();
         }
         return;
     }
-
-    const input = prompt("Enter GitHub PAT:");
-    if (input) {
-        localStorage.setItem('pogo_admin_token', input.trim());
+    const token = prompt("Enter your GitHub Personal Access Token (PAT) to activate Admin Mode:");
+    if(token) {
+        localStorage.setItem('pogo_admin_token', token.trim());
         location.reload();
     }
 }
 
-/* =========================
-   SYNC TO GITHUB
-========================= */
-async function syncToGist() {
+async function syncDataToGithubGist() {
     const btn = document.getElementById('submit-btn');
     btn.disabled = true;
-    btn.innerText = "Syncing...";
+    btn.innerText = "Syncing Cloud Server... ⏳";
 
     try {
-        const cleanToken = token.replace(/[^\w]/g, '');
+        const cleanToken = userGithubToken.replace(/['"`\s]/g, '');
 
-        const res = await fetch(GIST_API_URL, {
-            method: "PATCH",
+        const response = await fetch(GIST_API_URL, {
+            method: 'PATCH',
             headers: {
-                Authorization: `token ${cleanToken}`,
-                "Content-Type": "application/json"
+                'Authorization': 'token ' + cleanToken,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                files: {
-                    "hotspots.json": {
-                        content: JSON.stringify(hotspots, null, 2)
-                    }
-                }
+                files: { "hotspots.json": { content: JSON.stringify(globalHotspotsArray, null, 2) } }
             })
         });
 
-        if (!res.ok) throw new Error("Upload failed");
-
-        alert("✅ Synced successfully");
+        if(!response.ok) throw new Error("Sync failed");
+        alert("Success! Coordinates successfully updated across the global cloud framework.");
         location.reload();
-    } catch (err) {
-        console.error(err);
-        alert("❌ Sync failed");
+    } catch (error) {
+        alert("Error syncing to cloud! Double check your GitHub token permissions.");
         btn.disabled = false;
-        btn.innerText = "Save to Cloud";
+        btn.innerText = "Save Directly to Cloud Website";
     }
 }
 
-/* =========================
-   ADD / DELETE
-========================= */
-function addLocation() {
-    if (!isAdmin) return;
-
+function addLocationToCloud() {
+    if (!isAdminMode) return;
     const country = document.getElementById('input-country').value;
     const name = document.getElementById('input-name').value.trim();
     const coords = document.getElementById('input-coords').value.trim();
 
-    if (!name || !coords) return alert("Missing input");
+    if(!name || !coords) { alert("Please input name and coords."); return; }
 
-    hotspots.push({ country, name, coords });
-    syncToGist();
+    globalHotspotsArray.push({ country, name, coords });
+    syncDataToGithubGist();
 }
 
-function deleteLocation(index) {
-    if (!isAdmin) return;
-
-    if (confirm("Delete item?")) {
-        hotspots.splice(index, 1);
-        syncToGist();
+function deleteLocationFromCloud(index) {
+    if (!isAdminMode) return;
+    if(confirm("Permanently delete this item for everyone in the chat?")) {
+        globalHotspotsArray.splice(index, 1);
+        syncDataToGithubGist();
     }
 }
 
-/* =========================
-   EVENTS (NO INLINE JS)
-========================= */
-document.addEventListener("click", (e) => {
-    if (e.target.classList.contains("btn-copy")) {
-        const id = e.target.dataset.id;
-        const text = document.getElementById(id).innerText;
+// Live Clocks Script
+function updateClocks() {
+    const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+    document.getElementById('time-ph').innerText = "| " + new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'Asia/Manila' });
+    document.getElementById('time-jp').innerText = "| " + new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'Asia/Tokyo' });
+    document.getElementById('time-br').innerText = "| " + new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'America/Sao_Paulo' });
+}
+setInterval(updateClocks, 1000); updateClocks();
 
-        navigator.clipboard.writeText(text).then(() => {
-            e.target.innerText = "Copied ✓";
-            setTimeout(() => e.target.innerText = "Copy", 1500);
-        });
-    }
-
-    if (e.target.dataset.delete) {
-        deleteLocation(Number(e.target.dataset.delete));
-    }
+// Accordion Controls
+document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const item = header.parentElement;
+        const content = item.querySelector('.accordion-content');
+        const isOpen = item.classList.contains('active');
+        document.querySelectorAll('.accordion-item').forEach(i => { i.classList.remove('active'); i.querySelector('.accordion-content').style.maxHeight = null; });
+        if (!isOpen) { item.classList.add('active'); content.style.maxHeight = content.scrollHeight + "px"; }
+    });
 });
 
-/* =========================
-   CLOCKS
-========================= */
-function updateClocks() {
-    const opt = { hour: '2-digit', minute: '2-digit', hour12: true };
-
-    document.getElementById('time-ph').innerText =
-        "| " + new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'Asia/Manila' });
-
-    document.getElementById('time-jp').innerText =
-        "| " + new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'Asia/Tokyo' });
-
-    document.getElementById('time-br').innerText =
-        "| " + new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'America/Sao_Paulo' });
+function copyCoords(id, button) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        const orig = button.innerText; button.innerText = "Copied! ✓"; button.style.backgroundColor = "#4cd137";
+        setTimeout(() => { button.innerText = orig; button.style.backgroundColor = "#0084ff"; }, 1500);
+    });
 }
 
-setInterval(updateClocks, 1000);
-updateClocks();
-
-/* =========================
-   INIT
-========================= */
 loadCloudLocations();
 </script>
 </body>
