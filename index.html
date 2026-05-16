@@ -5,14 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon GO Hotspots</title>
     <style>
-        /* CSS Root Directory Variables Setup */
         :root {
             --bg-image: url('https://lh3.googleusercontent.com/PWSt8OX5qG416x9n9SAfktLM_n_CbEVCSo9_V4OKdnaOlN_veHLikyOEHqlDOAZqHwFsrAdMXH_dOzyf8l-jsX_5pQq1hR4DEQ=e365-pa-nu-w2880-rw');
             --logo-image: url('https://upload.wikimedia.org/wikipedia/commons/2/23/Pok%C3%A9mon_GO_logo.svg');
-            
-            /* Container configured to exactly 60% transparency */
             --bg-color-container: rgba(240, 242, 245, 0.60);
-            
             --accordion-header-bg: #2e4f4f;
             --accordion-header-hover: #243e3e;
             --btn-copy-bg: #0084ff;
@@ -29,8 +25,6 @@
             flex-direction: column;
             align-items: center;
             min-height: auto;
-
-            /* Parallax Background - Dynamic link from root variables */
             background-image: var(--bg-image);
             background-attachment: fixed;
             background-position: center top;
@@ -50,8 +44,6 @@
             box-sizing: border-box;
             margin-top: 40px;
             margin-bottom: 40px;
-
-            /* Frosted glass blur effect behind the 60% transparency layout */
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
@@ -61,8 +53,6 @@
             margin-top: 10px;
             margin-bottom: 5px;
             filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.15));
-            
-            /* Logo variable implementation */
             content: var(--logo-image); 
         }
         h1 {
@@ -72,7 +62,6 @@
             margin-bottom: 20px;
             margin-top: 5px;
         }
-        /* Accordion Styles */
         .accordion-item {
             background-color: #ffffff;
             border-radius: 12px;
@@ -135,7 +124,6 @@
         .content-padding {
             padding: 15px;
         }
-        /* Card Styles */
         .card {
             background: #ffffff;
             border-radius: 8px;
@@ -184,18 +172,23 @@
         .btn-copy:hover {
             background-color: var(--btn-copy-hover);
         }
+        .status-msg {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Branding Logo placeholder - Controlled via CSS :root variables definition -->
     <img class="main-logo" alt="Pokémon GO Logo">
-
     <h1>Pokémon GO Hotspots</h1>
+    <div id="loading-status" class="status-msg">Loading latest live pins...</div>
 
     <!-- PH ACCORDION -->
-    <div class="accordion-item">
+    <div class="accordion-item" id="item-ph">
         <div class="accordion-header">
             <div class="header-title">
                 <svg class="flag-svg" viewBox="0 0 1800 900">
@@ -206,36 +199,19 @@
                     <path d="M0,0 L900,450 L0,900 Z" fill="#fff"/>
                     <circle cx="300" cy="450" r="90" fill="#fcd116"/>
                     <g fill="#fcd116">
-                        <circle cx="300" cy="225" r="25"/>
-                        <circle cx="300" cy="675" r="25"/>
-                        <circle cx="525" cy="450" r="25"/>
+                        <circle cx="300" cy="225" r="25"/><circle cx="300" cy="675" r="25"/><circle cx="525" cy="450" r="25"/>
                     </g>
                 </svg>
                 <span>PH <span class="time-text" id="time-ph">| --:-- --</span></span>
             </div>
         </div>
         <div class="accordion-content">
-            <div class="content-padding">
-                <div class="card">
-                    <div class="location-name">📍 Rizal Park (Luneta, Manila)</div>
-                    <div class="coords" id="ph1">14.5826, 120.9787</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('ph1', this)">Copy Coords</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="location-name">📍 Quezon Memorial Circle</div>
-                    <div class="coords" id="ph2">14.6515, 121.0494</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('ph2', this)">Copy Coords</button>
-                    </div>
-                </div>
-            </div>
+            <div class="content-padding" id="list-ph">No pins loaded.</div>
         </div>
     </div>
 
     <!-- JP ACCORDION -->
-    <div class="accordion-item">
+    <div class="accordion-item" id="item-jp">
         <div class="accordion-header">
             <div class="header-title">
                 <svg class="flag-svg" viewBox="0 0 900 600">
@@ -246,27 +222,12 @@
             </div>
         </div>
         <div class="accordion-content">
-            <div class="content-padding">
-                <div class="card">
-                    <div class="location-name">📍 Shinjuku Station (Tokyo)</div>
-                    <div class="coords" id="jp1">35.6909, 139.7003</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('jp1', this)">Copy Coords</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="location-name">📍 Tsuruma Park (Nagoya Pokeball Park)</div>
-                    <div class="coords" id="jp2">35.1558, 136.9213</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('jp2', this)">Copy Coords</button>
-                    </div>
-                </div>
-            </div>
+            <div class="content-padding" id="list-jp">No pins loaded.</div>
         </div>
     </div>
 
     <!-- BR ACCORDION -->
-    <div class="accordion-item">
+    <div class="accordion-item" id="item-br">
         <div class="accordion-header">
             <div class="header-title">
                 <svg class="flag-svg" viewBox="0 0 720 504">
@@ -279,128 +240,71 @@
             </div>
         </div>
         <div class="accordion-content">
-            <div class="content-padding">
-                <div class="card">
-                    <div class="location-name">📍 Ibirapuera Park (Main Loop)</div>
-                    <div class="coords" id="br1">-23.587416, -46.657633</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('br1', this)">Copy Coords</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="location-name">📍 Paulista Avenue (Masp)</div>
-                    <div class="coords" id="br2">-23.561502, -46.655952</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('br2', this)">Copy Coords</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="location-name">📍 Parque Villa-Lobos</div>
-                    <div class="coords" id="br3">-23.546413, -46.724773</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('br3', this)">Copy Coords</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="location-name">📍 Consolação Cemetery</div>
-                    <div class="coords" id="br4">-23.548480, -46.656041</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('br4', this)">Copy Coords</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="location-name">📍 Farroupilha Park (Redenção)</div>
-                    <div class="coords" id="br5">-30.038148, -51.219213</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('br5', this)">Copy Coords</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="location-name">📍 Marinha do Brasil Park</div>
-                    <div class="coords" id="br6">-30.053896, -51.229158</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('br6', this)">Copy Coords</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="location-name">📍 Santos Beachfront Garden</div>
-                    <div class="coords" id="br7">-23.970221, -46.327599</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('br7', this)">Copy Coords</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="location-name">📍 Curitiba Botanical Garden</div>
-                    <div class="coords" id="br8">-25.442996, -49.239634</div>
-                    <div class="btn-group">
-                        <button class="btn-copy" onclick="copyCoords('br8', this)">Copy Coords</button>
-                    </div>
-                </div>
-            </div>
+            <div class="content-padding" id="list-br">No pins loaded.</div>
         </div>
     </div>
-
 </div>
 
 <script>
-// Live Clocks Script based on real IANA Time Zones
-function updateClocks() {
-    const options = { hour: '2-digit', minute: '2-digit', hour12: true };
-    
-    // Manila, PH Time
-    const timePH = new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'Asia/Manila' });
-    document.getElementById('time-ph').innerText = "| " + timePH;
+// ⚠️ PASTE YOUR COPIED RAW GIST URL INSIDE THE QUOTES BELOW:
+const GIST_DATABASE_URL = "PASTE_YOUR_RAW_GIST_URL_HERE";
 
-    // Tokyo, JP Time
-    const timeJP = new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'Asia/Tokyo' });
-    document.getElementById('time-jp').innerText = "| " + timeJP;
-
-    // Sao Paulo, BR Time
-    const timeBR = new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'America/Sao_Paulo' });
-    document.getElementById('time-br').innerText = "| " + timeBR;
+async function fetchAndRenderLocations() {
+    try {
+        const response = await fetch(GIST_DATABASE_URL);
+        if (!response.ok) throw new Error("Database offline");
+        const hotspots = await response.json();
+        
+        ['ph', 'jp', 'br'].forEach(lang => document.getElementById(`list-${lang}`).innerHTML = '');
+        
+        hotspots.forEach((item, index) => {
+            const uniqueId = `${item.country}-${index}`;
+            const cleanName = item.name.startsWith('📍') ? item.name : '📍 ' + item.name;
+            const cardHtml = `
+                <div class="card">
+                    <div class="location-name">${cleanName}</div>
+                    <div class="coords" id="${uniqueId}">${item.coords}</div>
+                    <div class="btn-group"><button class="btn-copy" onclick="copyCoords('${uniqueId}', this)">Copy Coords</button></div>
+                </div>`;
+            const container = document.getElementById(`list-${item.country}`);
+            if(container) container.innerHTML += cardHtml;
+        });
+        document.getElementById('loading-status').style.display = 'none';
+    } catch (error) {
+        document.getElementById('loading-status').innerText = "⚠️ Error loading live database!";
+        console.error(error);
+    }
 }
 
-// Run clocks immediately and refresh every second
-setInterval(updateClocks, 1000);
-updateClocks();
+// Live Clocks Script
+function updateClocks() {
+    const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+    document.getElementById('time-ph').innerText = "| " + new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'Asia/Manila' });
+    document.getElementById('time-jp').innerText = "| " + new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'Asia/Tokyo' });
+    document.getElementById('time-br').innerText = "| " + new Date().toLocaleTimeString('en-US', { ...options, timeZone: 'America/Sao_Paulo' });
+}
+setInterval(updateClocks, 1000); updateClocks();
 
-// Accordion Logic to open only one at a time
+// Accordion Controls
 document.querySelectorAll('.accordion-header').forEach(header => {
     header.addEventListener('click', () => {
-        const currentItem = header.parentElement;
-        const content = currentItem.querySelector('.accordion-content');
-        const isOpen = currentItem.classList.contains('active');
-
-        // Close all items first
-        document.querySelectorAll('.accordion-item').forEach(item => {
-            item.classList.remove('active');
-            item.querySelector('.accordion-content').style.maxHeight = null;
-        });
-
-        // If the clicked item was not open, open it
-        if (!isOpen) {
-            currentItem.classList.add('active');
-            content.style.maxHeight = content.scrollHeight + "px";
-        }
+        const item = header.parentElement;
+        const content = item.querySelector('.accordion-content');
+        const isOpen = item.classList.contains('active');
+        document.querySelectorAll('.accordion-item').forEach(i => { i.classList.remove('active'); i.querySelector('.accordion-content').style.maxHeight = null; });
+        if (!isOpen) { item.classList.add('active'); content.style.maxHeight = content.scrollHeight + "px"; }
     });
 });
 
-// Copying Logic
 function copyCoords(id, button) {
     const text = document.getElementById(id).innerText;
     navigator.clipboard.writeText(text).then(() => {
-        const originalText = button.innerText;
-        button.innerText = "Copied! ✓";
-        button.style.backgroundColor = "#4cd137";
-        setTimeout(() => {
-            button.innerText = originalText;
-            button.style.backgroundColor = "#0084ff";
-        }, 1500);
-    }).catch(err => {
-        console.error('Failed to copy text: ', err);
+        const orig = button.innerText; button.innerText = "Copied! ✓"; button.style.backgroundColor = "#4cd137";
+        setTimeout(() => { button.innerText = orig; button.style.backgroundColor = "#0084ff"; }, 1500);
     });
 }
-</script>
 
+fetchAndRenderLocations();
+</script>
 </body>
 </html>
