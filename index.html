@@ -329,7 +329,7 @@ const GIST_RAW_URL = "https://gist.githubusercontent.com/pacsone/2328a8e8f75dec3
 const GIST_API_URL = `https://github.com${GIST_ID}`;
 
 let globalHotspotsArray = [];
-let userGithubToken = localStorage.getItem('pogo_admin_token') || "";
+let userGithubToken = localStorage.getItem('pogo-website-admin') || "";
 let isAdminMode = userGithubToken !== "";
 
 async function loadCloudLocations() {
@@ -371,14 +371,14 @@ function renderLayoutElements() {
 function promptAdminLogin() {
     if(isAdminMode) {
         if(confirm("Log out of Admin Dashboard mode?")) {
-            localStorage.removeItem('pogo_admin_token');
+            localStorage.removeItem('pogo-website-admin');
             location.reload();
         }
         return;
     }
     const token = prompt("Enter your GitHub Personal Access Token (PAT) to activate Admin Mode:");
     if(token) {
-        localStorage.setItem('pogo_admin_token', token.trim());
+        localStorage.setItem('pogo-website-admin', token.trim());
         location.reload();
     }
 }
