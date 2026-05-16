@@ -1,246 +1,523 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pokémon GO Hotspots</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon GO Hotspots</title>
+    <style>
+        :root {
+            --bg-image: url('https://lh3.googleusercontent.com/PWSt8OX5qG416x9n9SAfktLM_n_CbEVCSo9_V4OKdnaOlN_veHLikyOEHqlDOAZqHwFsrAdMXH_dOzyf8l-jsX_5pQq1hR4DEQ=e365-pa-nu-w2880-rw');
+            --logo-image: url('https://upload.wikimedia.org/wikipedia/commons/2/23/Pok%C3%A9mon_GO_logo.svg');
+            --bg-color-container: rgba(240, 242, 245, 0.60);
+            --accordion-header-bg: #2e4f4f;
+            --accordion-header-hover: #243e3e;
+            --btn-copy-bg: #0084ff;
+            --btn-copy-hover: #0066cc;
+            --text-main: #1c1e21;
+        }
 
-<style>
-:root {
-    --bg-image: url('https://lh3.googleusercontent.com/PWSt8OX5qG416x9n9SAfktLM_n_CbEVCSo9_V4OKdnaOlN_veHLikyOEHqlDOAZqHwFsrAdMXH_dOzyf8l-jsX_5pQq1hR4DEQ=e365-pa-nu-w2880-rw');
-    --logo-image: url('https://upload.wikimedia.org/wikipedia/commons/2/23/Pok%C3%A9mon_GO_logo.svg');
-    --bg-color-container: rgba(240, 242, 245, 0.60);
-    --accordion-header-bg: #2e4f4f;
-    --accordion-header-hover: #243e3e;
-    --btn-copy-bg: #0084ff;
-    --btn-copy-hover: #0066cc;
-    --text-main: #1c1e21;
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: auto;
+            background-image: var(--bg-image);
+            background-attachment: fixed;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--bg-color-container);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .logo-area {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .main-logo {
+            width: 200px;
+            height: auto;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.15));
+            content: var(--logo-image); 
+        }
+        .admin-trigger {
+            position: absolute;
+            top: 10px;
+            right: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.3;
+            transition: opacity 0.2s;
+        }
+        .admin-trigger:hover { opacity: 1; }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            color: #0e8388;
+            margin-bottom: 20px;
+            margin-top: 5px;
+        }
+        .accordion-item {
+            background-color: #ffffff;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            overflow: hidden;
+            width: 100%;
+        }
+        .accordion-header {
+            background-color: var(--accordion-header-bg);
+            color: #ffffff;
+            font-size: 19px;
+            font-weight: bold;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .header-title { display: flex; align-items: center; gap: 14px; }
+        .flag-svg {
+            width: 32px;
+            height: 22px;
+            border-radius: 3px;
+            display: block;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .time-text {
+            font-family: monospace;
+            font-size: 15px;
+            background-color: rgba(255,255,255,0.15);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .accordion-header:hover { background-color: var(--accordion-header-hover); }
+        .accordion-header::after {
+            content: '▼';
+            font-size: 12px;
+            transition: transform 0.2s;
+            margin-left: 10px;
+        }
+        .accordion-item.active .accordion-header::after { transform: rotate(180deg); }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+        }
+        .content-padding { padding: 15px; }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e4e6eb;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+        .card:last-child { margin-bottom: 0; }
+        .location-name { font-weight: 600; font-size: 16px; padding-right: 30px; }
+        .coords {
+            font-family: monospace;
+            background-color: #f1f3f5;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #e4e6eb;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .btn-group { display: flex; margin-top: 5px; }
+        button {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-copy { background-color: var(--btn-copy-bg); color: white; }
+        .btn-copy:hover { background-color: var(--btn-copy-hover); }
+        .status-msg { text-align: center; font-size: 14px; color: #666; margin-bottom: 10px; }
+        
+        .btn-delete {
+            display: none; 
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            align-items: center;
+            justify-content: center;
+        }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: var(--text-main);
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: auto;
-    background-image: var(--bg-image);
-    background-attachment: fixed;
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-.container {
-    max-width: 500px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: var(--bg-color-container);
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    margin-top: 40px;
-    backdrop-filter: blur(8px);
-}
-
-.logo-area {
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.main-logo {
-    width: 200px;
-    margin-top: 10px;
-    margin-bottom: 5px;
-}
-
-.panel-trigger {
-    position: absolute;
-    top: 10px;
-    right: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-h1 {
-    text-align: center;
-    color: #0e8388;
-}
-
-.accordion-item {
-    background: #fff;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    width: 100%;
-}
-
-.accordion-header {
-    background: var(--accordion-header-bg);
-    color: white;
-    padding: 15px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-}
-
-.accordion-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: 0.3s;
-}
-
-.card {
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 12px;
-}
-
-.btn-copy {
-    background: var(--btn-copy-bg);
-    color: white;
-    width: 100%;
-    padding: 12px;
-}
-
-.btn-delete {
-    display: none;
-    position: absolute;
-}
-
-.admin-panel {
-    display: none;
-}
-</style>
+        /* Admin Management Panel Styles */
+        .admin-panel {
+            display: none; 
+            max-width: 500px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        .admin-panel h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #2e4f4f;
+            border-bottom: 2px solid #e4e6eb;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .form-group label { font-size: 14px; font-weight: 600; }
+        .form-group input, .form-group select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #cccccc;
+            font-size: 14px;
+        }
+        .btn-add {
+            background-color: #2e4f4f;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            margin-top: 5px;
+        }
+        .btn-add:hover { background-color: #243e3e; }
+        .btn-add:disabled { background-color: #cccccc; cursor: not-allowed; }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
-<div class="logo-area">
-    <img class="main-logo" alt="Pokémon GO Logo">
-    <button class="panel-trigger" onclick="toggleAdminPanel()">➕</button>
+    <div class="logo-area">
+        <img class="main-logo" alt="Pokémon GO Logo">
+        <button class="admin-trigger" onclick="promptAdminLogin()" title="Admin Login">🔑</button>
+    </div>
+    <h1>Pokémon GO Hotspots</h1>
+    <div id="loading-status" class="status-msg">Loading latest live pins...</div>
+
+    <!-- PH ACCORDION -->
+    <div class="accordion-item" id="item-ph">
+        <div class="accordion-header">
+            <div class="header-title">
+                <svg class="flag-svg" viewBox="0 0 1800 900">
+                    <rect width="1800" height="900" fill="#fff"/>
+                    <path d="M0,0 L900,450 L0,900 Z" fill="#fff"/>
+                    <path d="M0,0 L1800,0 L1800,450 L900,450 Z" fill="#0038a8"/>
+                    <path d="M0,900 L1800,900 L1800,450 L900,450 Z" fill="#ce1126"/>
+                    <path d="M0,0 L900,450 L0,900 Z" fill="#fff"/>
+                    <circle cx="300" cy="450" r="90" fill="#fcd116"/>
+                    <g fill="#fcd116">
+                        <circle cx="300" cy="225" r="25"/><circle cx="300" cy="675" r="25"/><circle cx="525" cy="450" r="25"/>
+                    </g>
+                </svg>
+                <span>PH <span class="time-text" id="time-ph">| --:-- --</span></span>
+            </div>
+        </div>
+        <div class="accordion-content">
+            <div class="content-padding" id="list-ph">No pins loaded.</div>
+        </div>
+    </div>
+
+    <!-- JP ACCORDION -->
+    <div class="accordion-item" id="item-jp">
+        <div class="accordion-header">
+            <div class="header-title">
+                <svg class="flag-svg" viewBox="0 0 900 600">
+                    <rect width="900" height="600" fill="#fff"/>
+                    <circle cx="450" cy="300" r="180" fill="#bc002d"/>
+                </svg>
+                <span>JP <span class="time-text" id="time-jp">| --:-- --</span></span>
+            </div>
+        </div>
+        <div class="accordion-content">
+            <div class="content-padding" id="list-jp">No pins loaded.</div>
+        </div>
+    </div>
+
+    <!-- BR ACCORDION -->
+    <div class="accordion-item" id="item-br">
+        <div class="accordion-header">
+            <div class="header-title">
+                <svg class="flag-svg" viewBox="0 0 720 504">
+                    <rect width="720" height="504" fill="#009c3b"/>
+                    <path d="M360,36 L684,252 L360,468 L36,252 Z" fill="#ffdf00"/>
+                    <circle cx="360" cy="252" r="122" fill="#002277"/>
+                    <path d="M242,260 Q360,210 478,264 Q360,220 242,260 Z" fill="#ffffff"/>
+                </svg>
+                <span>BR <span class="time-text" id="time-br">| --:-- --</span></span>
+            </div>
+        </div>
+        <div class="accordion-content">
+            <div class="content-padding" id="list-br">No pins loaded.</div>
+        </div>
+    </div>
 </div>
 
-<h1>Pokémon GO Hotspots</h1>
-<div id="loading-status">Loading latest live pins...</div>
-
-<div class="accordion-item">
-<div class="accordion-header">PH <span id="time-ph"></span></div>
-<div class="accordion-content"><div id="list-ph"></div></div>
-</div>
-
-<div class="accordion-item">
-<div class="accordion-header">JP <span id="time-jp"></span></div>
-<div class="accordion-content"><div id="list-jp"></div></div>
-</div>
-
-<div class="accordion-item">
-<div class="accordion-header">BR <span id="time-br"></span></div>
-<div class="accordion-content"><div id="list-br"></div></div>
-</div>
-</div>
-
+<!-- ADMIN MANAGEMENT PANEL -->
 <div class="admin-panel" id="dashboard-panel">
-<select id="input-country">
-<option value="ph">PH</option>
-<option value="jp">JP</option>
-<option value="br">BR</option>
-</select>
-
-<input id="input-name">
-<input id="input-coords">
-
-<button onclick="addLocationToCloud()">Save</button>
+    <h2>🛠️ Live Cloud Dashboard Manager</h2>
+    <div class="form-group">
+        <label for="input-country">Select Country</label>
+        <select id="input-country">
+            <option value="ph">PH (Philippines)</option>
+            <option value="jp">JP (Japan)</option>
+            <option value="br">BR (Brazil)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="input-name">Location Name</label>
+        <input type="text" id="input-name" placeholder="e.g. Rizal Park (Manila)">
+    </div>
+    <div class="form-group">
+        <label for="input-coords">Coordinates</label>
+        <input type="text" id="input-coords" placeholder="e.g. 14.5826, 120.9787">
+    </div>
+    <button class="btn-add" id="submit-btn" onclick="addLocationToCloud()">Save Directly to Cloud Website</button>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+const GIST_ID = "2328a8e8f75dec3bb570d9c51d64a75d";
+const GIST_RAW_URL = "https://gist.githubusercontent.com/pacsone/2328a8e8f75dec3bb570d9c51d64a75d/raw/hotspots.json";
+const GIST_API_URL = `https://api.github.com/gists/${GIST_ID}`;
 
-// ✅ FIX LOGO
-const logo = document.querySelector(".main-logo");
-const logoURL = getComputedStyle(document.documentElement)
-    .getPropertyValue('--logo-image')
-    .replace(/^url\(["']?/, '')
-    .replace(/["']?\)$/, '');
+let hotspots = [];
+let token = localStorage.getItem('pogo_admin_token') || "";
+let isAdmin = Boolean(token);
 
-if (logo && logoURL) logo.src = logoURL;
+/* =========================
+   LOAD DATA
+========================= */
+async function loadCloudLocations() {
+    try {
+        const res = await fetch(`${GIST_RAW_URL}?t=${Date.now()}`);
+        if (!res.ok) throw new Error("Fetch failed");
 
-// DATA
-const RAW="https://gist.githubusercontent.com/pacsone/2328a8e8f75dec3bb570d9c51d64a75d/raw/hotspots.json";
+        hotspots = await res.json();
+        render();
 
-let data = [];
-
-// LOAD
-fetch(RAW+"?t="+Date.now())
-.then(r=>r.json())
-.then(json=>{
-    data=json;
-    render();
-    document.getElementById("loading-status").style.display="none";
-})
-.catch(()=>{
-    document.getElementById("loading-status").innerText="Offline";
-});
-
-// RENDER
-function render(){
-["ph","jp","br"].forEach(c=>{
-    let el=document.getElementById("list-"+c);
-    if(el) el.innerHTML="";
-});
-
-data.forEach((item,i)=>{
-    const name = item.name && item.name.startsWith("📍")
-        ? item.name
-        : "📍 " + (item.name || "");
-
-    let html=`
-    <div class="card">
-        <div>${name}</div>
-        <div id="c${i}">${item.coords}</div>
-        <button class="btn-copy" onclick="copyCoords('c${i}',this)">Copy Coords</button>
-    </div>`;
-    
-    let container=document.getElementById("list-"+item.country);
-    if(container) container.innerHTML+=html;
-});
+        document.getElementById('loading-status').hidden = true;
+    } catch (err) {
+        console.error(err);
+        document.getElementById('loading-status').innerText = "⚠️ Sync failed";
+    }
 }
 
-// ACCORDION FIX
-document.querySelectorAll(".accordion-header").forEach(h=>{
-h.addEventListener("click",()=>{
-let c=h.nextElementSibling;
-c.style.maxHeight=c.style.maxHeight?null:c.scrollHeight+"px";
-});
-});
+/* =========================
+   RENDER
+========================= */
+function render() {
+    const lists = {
+        ph: document.getElementById("list-ph"),
+        jp: document.getElementById("list-jp"),
+        br: document.getElementById("list-br")
+    };
 
-// COPY
-window.copyCoords=(id,btn)=>{
-navigator.clipboard.writeText(document.getElementById(id).innerText);
-btn.innerText="Copied!";
-setTimeout(()=>btn.innerText="Copy Coords",1000);
-};
+    Object.values(lists).forEach(el => el.innerHTML = "");
 
-// CLOCKS
-function updateClocks(){
-const opt={hour:'2-digit',minute:'2-digit',hour12:true};
-document.getElementById('time-ph').innerText="| "+new Date().toLocaleTimeString('en-US',{...opt,timeZone:'Asia/Manila'});
-document.getElementById('time-jp').innerText="| "+new Date().toLocaleTimeString('en-US',{...opt,timeZone:'Asia/Tokyo'});
-document.getElementById('time-br').innerText="| "+new Date().toLocaleTimeString('en-US',{...opt,timeZone:'America/Sao_Paulo'});
+    const fragmentMap = {
+        ph: document.createDocumentFragment(),
+        jp: document.createDocumentFragment(),
+        br: document.createDocumentFragment()
+    };
+
+    hotspots.forEach((item, index) => {
+        const container = fragmentMap[item.country];
+        if (!container) return;
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.index = index;
+
+        const name = item.name.startsWith('📍') ? item.name : `📍 ${item.name}`;
+
+        card.innerHTML = `
+            <div class="location-name">${name}</div>
+            <div class="coords" id="coord-${index}">${item.coords}</div>
+            <div class="btn-group">
+                <button class="btn-copy" data-id="coord-${index}">Copy</button>
+            </div>
+            ${isAdmin ? `<button class="btn-delete" data-delete="${index}">✕</button>` : ""}
+        `;
+
+        container.appendChild(card);
+    });
+
+    Object.keys(lists).forEach(key => lists[key].appendChild(fragmentMap[key]));
+
+    if (isAdmin) document.getElementById('dashboard-panel').hidden = false;
 }
-setInterval(updateClocks,1000);
+
+/* =========================
+   ADMIN LOGIN
+========================= */
+function promptAdminLogin() {
+    if (isAdmin) {
+        if (confirm("Logout admin mode?")) {
+            localStorage.removeItem('pogo_admin_token');
+            location.reload();
+        }
+        return;
+    }
+
+    const input = prompt("Enter GitHub PAT:");
+    if (input) {
+        localStorage.setItem('pogo_admin_token', input.trim());
+        location.reload();
+    }
+}
+
+/* =========================
+   SYNC TO GITHUB
+========================= */
+async function syncToGist() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerText = "Syncing...";
+
+    try {
+        const cleanToken = token.replace(/[^\w]/g, '');
+
+        const res = await fetch(GIST_API_URL, {
+            method: "PATCH",
+            headers: {
+                Authorization: `token ${cleanToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                files: {
+                    "hotspots.json": {
+                        content: JSON.stringify(hotspots, null, 2)
+                    }
+                }
+            })
+        });
+
+        if (!res.ok) throw new Error("Upload failed");
+
+        alert("✅ Synced successfully");
+        location.reload();
+    } catch (err) {
+        console.error(err);
+        alert("❌ Sync failed");
+        btn.disabled = false;
+        btn.innerText = "Save to Cloud";
+    }
+}
+
+/* =========================
+   ADD / DELETE
+========================= */
+function addLocation() {
+    if (!isAdmin) return;
+
+    const country = document.getElementById('input-country').value;
+    const name = document.getElementById('input-name').value.trim();
+    const coords = document.getElementById('input-coords').value.trim();
+
+    if (!name || !coords) return alert("Missing input");
+
+    hotspots.push({ country, name, coords });
+    syncToGist();
+}
+
+function deleteLocation(index) {
+    if (!isAdmin) return;
+
+    if (confirm("Delete item?")) {
+        hotspots.splice(index, 1);
+        syncToGist();
+    }
+}
+
+/* =========================
+   EVENTS (NO INLINE JS)
+========================= */
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("btn-copy")) {
+        const id = e.target.dataset.id;
+        const text = document.getElementById(id).innerText;
+
+        navigator.clipboard.writeText(text).then(() => {
+            e.target.innerText = "Copied ✓";
+            setTimeout(() => e.target.innerText = "Copy", 1500);
+        });
+    }
+
+    if (e.target.dataset.delete) {
+        deleteLocation(Number(e.target.dataset.delete));
+    }
+});
+
+/* =========================
+   CLOCKS
+========================= */
+function updateClocks() {
+    const opt = { hour: '2-digit', minute: '2-digit', hour12: true };
+
+    document.getElementById('time-ph').innerText =
+        "| " + new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'Asia/Manila' });
+
+    document.getElementById('time-jp').innerText =
+        "| " + new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'Asia/Tokyo' });
+
+    document.getElementById('time-br').innerText =
+        "| " + new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'America/Sao_Paulo' });
+}
+
+setInterval(updateClocks, 1000);
 updateClocks();
 
-});
+/* =========================
+   INIT
+========================= */
+loadCloudLocations();
 </script>
-
 </body>
 </html>
