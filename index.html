@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon GO Hotspots</title>
+
+    <link rel="stylesheet" href="https://cloudflare.com" integrity="sha512-bZ9m08wS7S66fX6XpMvOToW6Xv9v8vG/8T+RrfG3E1hY1vX/jS0sYlP6T5Xm8E5GZ7X+Z0+3O2V5eG6M7b7vOQ==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
     <style>
         :root {
             --bg-image: url('https://lh3.googleusercontent.com/PWSt8OX5qG416x9n9SAfktLM_n_CbEVCSo9_V4OKdnaOlN_veHLikyOEHqlDOAZqHwFsrAdMXH_dOzyf8l-jsX_5pQq1hR4DEQ=e365-pa-nu-w2880-rw');
@@ -124,14 +127,17 @@
             display: block;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
-        .time-text {
+	.time-text-right {
             font-family: monospace;
-            font-size: 15px;
+            font-size: 14px;
             background-color: rgba(255,255,255,0.15);
             padding: 3px 8px;
             border-radius: 4px;
             font-weight: 500;
+            margin-left: auto;       /* Pushes the clock box to the right edge */
+            margin-right: 8px;       /* Adds neat spacing before the dropdown arrow */
         }
+
         .accordion-header:hover { background-color: var(--accordion-header-hover); }
         .accordion-header::after {
             content: '▼';
@@ -248,6 +254,8 @@
     </style>
 </head>
 <body>
+
+
 <!-- Floating Action Style Key Button -->
 <button class="admin-trigger" onclick="promptAdminLogin()" title="Admin Login">🔑</button>
 
@@ -255,84 +263,50 @@
     <div class="logo-area">
         <img class="main-logo" alt="Pokémon GO Logo">
     </div>
-    
     <h1>Pokémon GO Hotspots</h1>
     <div id="loading-status" class="status-msg">Loading latest live pins...</div>
 
-    <!-- PH ACCORDION -->
-    <div class="accordion-item" id="item-ph">
-        <div class="accordion-header">
-            <div class="header-title">
-                <svg class="flag-svg" viewBox="0 0 1800 900">
-                    <rect width="1800" height="900" fill="#fff"/>
-                    <path d="M0,0 L900,450 L0,900 Z" fill="#fff"/>
-                    <path d="M0,0 L1800,0 L1800,450 L900,450 Z" fill="#0038a8"/>
-                    <path d="M0,900 L1800,900 L1800,450 L900,450 Z" fill="#ce1126"/>
-                    <path d="M0,0 L900,450 L0,900 Z" fill="#fff"/>
-                    <circle cx="300" cy="450" r="90" fill="#fcd116"/>
-                    <g fill="#fcd116">
-                        <circle cx="300" cy="225" r="25"/><circle cx="300" cy="675" r="25"/><circle cx="525" cy="450" r="25"/>
-                    </g>
-                </svg>
-                <span>PH</span> <span class="time-text" id="time-ph">--:--</span>
-            </div>
-        </div>
-        <div class="accordion-content">
-            <div class="content-padding" id="list-ph"></div>
-        </div>
-    </div>
-
-    <!-- JP ACCORDION -->
-    <div class="accordion-item" id="item-jp">
-        <div class="accordion-header">
-            <div class="header-title">
-                <svg class="flag-svg" viewBox="0 0 900 600">
-                    <rect width="900" height="600" fill="#fff"/>
-                    <circle cx="450" cy="300" r="180" fill="#bc002d"/>
-                </svg>
-                <span>JP</span> <span class="time-text" id="time-jp">--:--</span>
-            </div>
-        </div>
-        <div class="accordion-content">
-            <div class="content-padding" id="list-jp"></div>
-        </div>
-    </div>
-    
-<!-- AE (DUBAI) ACCORDION -->
-    <div class="accordion-item" id="item-ae">
-        <div class="accordion-header">
-            <div class="header-title">
-                <svg class="flag-svg" viewBox="0 0 600 300">
-                    <rect width="600" height="300" fill="#fff"/>
-                    <rect width="600" height="100" fill="#00732f"/>
-                    <rect y="200" width="600" height="100" fill="#000000"/>
-                    <rect width="150" height="300" fill="#ff0000"/>
-                </svg>
-                <span>DXB</span> <span class="time-text" id="time-ae">| --:--</span>
-            </div>
-        </div>
-        <div class="accordion-content">
-            <div class="content-padding" id="list-ae"></div>
-        </div>
-    </div>
-    
-    <!-- BR ACCORDION -->
-    <div class="accordion-item" id="item-br">
-        <div class="accordion-header">
-            <div class="header-title">
-                <svg class="flag-svg" viewBox="0 0 720 504">
-                    <rect width="720" height="504" fill="#009c3b"/>
-                    <path d="M360,36 L684,252 L360,468 L36,252 Z" fill="#ffdf00"/>
-                    <circle cx="360" cy="252" r="133.2" fill="#002171"/>
-                </svg>
-                <span>BR</span> <span class="time-text" id="time-br">--:--</span>
-            </div>
-        </div>
-        <div class="accordion-content">
-            <div class="content-padding" id="list-br"></div>
-        </div>
-    </div>
+    <!-- THIS SINGLE PLACEHOLDER NOW DYNAMICALLY GENERATES ALL ACCORDIONS & FLAGS -->
+    <div id="dynamic-accordion-container" style="width: 100%;"></div>
 </div>
+
+<!-- Admin Dashboard Input Modification Form Framework -->
+<div class="admin-panel" id="dashboard-panel">
+    <!-- NEW SECTION: Create a brand new country category completely code-free -->
+    <h2 style="margin-top:0;">Create New Country Category</h2>
+    <div class="form-group">
+        <label for="new-country-code">Country Acronym Key (e.g., GER, DXB, US)</label>
+        <input type="text" id="new-country-code" placeholder="e.g., GER">
+    </div>
+    <div class="form-group">
+        <label for="new-country-timezone">IANA Timezone Location String</label>
+        <input type="text" id="new-country-timezone" placeholder="e.g., Europe/Berlin">
+    </div>
+    <div class="form-group">
+        <label for="new-country-flag">Flag Emoji (This renders beautifully instead of messy SVGs)</label>
+        <input type="text" id="new-country-flag" placeholder="e.g., 🇩🇪">
+    </div>
+    <button class="btn-add" onclick="addNewCategoryToCloud()" style="background-color: #0e8388; margin-bottom: 25px;">Create Category Box</button>
+
+    <h2 style="border-top: 2px solid #e4e6eb; padding-top: 15px;">Add/Edit Location Coordinates</h2>
+    <div class="form-group">
+        <label for="input-country">Target Region</label>
+        <select id="input-country">
+            <!-- Automatically filled by active dynamic categories -->
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="input-name">Location Identifier Name</label>
+        <input type="text" id="input-name" placeholder="e.g., Luneta Park">
+    </div>
+    <div class="form-group">
+        <label for="input-coords">Geospatial Coordinates</label>
+        <input type="text" id="input-coords" placeholder="e.g., 14.5826, 120.9787">
+    </div>
+    <button class="btn-add" id="submit-btn" onclick="addLocationToCloud()">Save Directly to Cloud Website</button>
+</div>
+
+
 
 <!-- Admin Dashboard Input Modification Form Framework -->
 <div class="admin-panel" id="dashboard-panel">
@@ -359,75 +333,113 @@
 
 <script>
 const GIST_ID = "2328a8e8f75dec3bb570d9c51d64a75d";
-const GIST_API_URL = `https://api.github.com/gists/${GIST_ID}`;
+const GIST_RAW_URL =`https://gist.githubusercontent.com/pacsone/${GIST_ID}/raw/hotspots.json`;
+const GIST_API_URL = `https://api.github.com/gists/${GIST_ID}`; // Locked in place
 
-let globalHotspotsArray = [];
-const userGithubToken = (localStorage.getItem('pogo_admin_token') || "").replace(/['"`\s]/g, '');
+let cloudDatabasePayload = { categories: [], locations: [] };
+let currentEditingIndex = null;
+let clockIntervalTracker = null;
+
+const absoluteDefaultBackup = {
+    categories: [
+        { code: "ph", label: "PH", zone: "Asia/Manila", flag: "" },
+        { code: "jp", label: "JP", zone: "Asia/Tokyo", flag: "" },
+        { code: "br", label: "BR", zone: "America/Sao_Paulo", flag: "" },
+        { code: "ae", label: "DXB", zone: "Asia/Dubai", flag: "" },
+        { code: "us", label: "US", zone: "America/Chicago", flag: "" }
+    ],
+    locations: []
+};
+
+const savedToken = localStorage.getItem('pogo_admin_token');
+const userGithubToken = savedToken ? savedToken.replace(/['"`\s]/g, '') : "";
 const isAdminMode = userGithubToken !== "";
 
-// Efficiently loads cloud locations using HTTP conditional caching (ETags)
+document.addEventListener("DOMContentLoaded", () => {
+    injectCancelElementStructure();
+});
+
 async function loadCloudLocations() {
-    const statusEl = document.getElementById('loading-status');
     try {
-        const headers = { 'Accept': 'application/vnd.github+json' };
-        const savedEtag = localStorage.getItem(`gist_etag_${GIST_ID}`);
-        const cachedData = localStorage.getItem(`gist_data_${GIST_ID}`);
+        const response = await fetch(`${GIST_RAW_URL}?t=${new Date().getTime()}`);
+        if (!response.ok) throw new Error("Offline");
         
-        if (savedEtag && cachedData) {
-            headers['If-None-Match'] = savedEtag;
-        }
-
-        const response = await fetch(GIST_API_URL, { method: 'GET', headers });
-
-        if (response.status === 304 && cachedData) {
-            globalHotspotsArray = JSON.parse(cachedData);
-        } else if (response.ok) {
-            const gistData = await response.json();
-            const fileContent = gistData.files["hotspots.json"]?.content;
-            if (!fileContent) throw new Error("Target file missing in Gist");
-            
-            globalHotspotsArray = JSON.parse(fileContent);
-            
-            const newEtag = response.headers.get('ETag');
-            if (newEtag) {
-                localStorage.setItem(`gist_etag_${GIST_ID}`, newEtag);
-                localStorage.setItem(`gist_data_${GIST_ID}`, fileContent);
-            }
+        const runtimeData = await response.json();
+        
+        if (Array.isArray(runtimeData)) {
+            cloudDatabasePayload.locations = runtimeData;
+            cloudDatabasePayload.categories = [...absoluteDefaultBackup.categories];
+        } else if (runtimeData && typeof runtimeData === 'object' && runtimeData.categories) {
+            cloudDatabasePayload = runtimeData;
+            if (!cloudDatabasePayload.locations) cloudDatabasePayload.locations = [];
         } else {
-            throw new Error(`Server returned status: ${response.status}`);
+            cloudDatabasePayload = { ...absoluteDefaultBackup };
         }
+
+        buildDynamicUILayout();
         
-        renderLayoutElements();
-        if (statusEl) statusEl.style.display = 'none';
+        const loader = document.getElementById('loading-status');
+        if (loader) loader.style.display = 'none';
     } catch (error) {
-        if (statusEl) statusEl.innerText = "⚠️ Could not sync live server data!";
-        console.error("Fetch error:", error);
-        
-        const cachedData = localStorage.getItem(`gist_data_${GIST_ID}`);
-        if (cachedData) {
-            globalHotspotsArray = JSON.parse(cachedData);
-            renderLayoutElements();
-        }
+        const loader = document.getElementById('loading-status');
+        if (loader) loader.innerText = "⚠️ Could not sync live server data!";
+        console.error("Database initialization fault:", error);
     }
 }
 
-// Memory-safe layout rendering framework
-function renderLayoutElements() {
-    const targets = ['ph', 'jp', 'ae','br'];
-    targets.forEach(lang => {
-        const el = document.getElementById(`list-${lang}`);
-        if (el) el.innerHTML = '';
+function buildDynamicUILayout() {
+    const container = document.getElementById('dynamic-accordion-container');
+    const dropdown = document.getElementById('input-country');
+    if (!container) return;
+
+    container.innerHTML = '';
+    if (dropdown) dropdown.innerHTML = '';
+
+    cloudDatabasePayload.categories.forEach(cat => {
+        if (dropdown) {
+            const opt = document.createElement('option');
+            opt.value = cat.code;
+            opt.textContent = cat.label;
+            dropdown.appendChild(opt);
+        }
+
+        // 100% FIXED: New library formatting values map ('fi fi-xx')
+        const codeMap = {
+            "ae": "ae",
+            "dxb": "ae",
+            "ph": "ph",
+            "jp": "jp",
+            "br": "br",
+            "us": "us"
+        };
+        const flagClassCode = codeMap[cat.code.toLowerCase()] || cat.code.toLowerCase();
+
+        const accordionHtml = `
+            <div class="accordion-item" id="item-${cat.code}">
+                <div class="accordion-header">
+                    <div class="header-title" style="display: flex; align-items: center;">
+                        <!-- Fixed explicit CSS library element calls -->
+                        <span class="fi fi-${flagClassCode}" style="width: 32px; height: 22px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); display: inline-block;"></span>
+                        <span style="margin-left: 14px; font-weight: bold; font-size: 19px;">${cat.label}</span> 
+                    </div>
+                    <span class="time-text-right" id="time-${cat.code}">--:--</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="content-padding" id="list-${cat.code}"></div>
+                </div>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', accordionHtml);
     });
-    
-    globalHotspotsArray.forEach((item, index) => {
-        const container = document.getElementById(`list-${item.country}`);
-        if (!container) return;
+
+    cloudDatabasePayload.locations.forEach((item, index) => {
+        const listContainer = document.getElementById(`list-${item.country}`);
+        if (!listContainer) return;
 
         const uniqueId = `${item.country}-${index}`;
         const cleanName = item.name.startsWith('📍') ? item.name : '📍 ' + item.name;
         const deleteStyle = isAdminMode ? 'display: flex;' : 'display: none;';
+        const editStyle = isAdminMode ? 'display: inline-block;' : 'display: none;';
 
-        // Escaping parameters contextually to block persistent XSS injections
         const safeName = cleanName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         const safeCoords = item.coords.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -437,34 +449,50 @@ function renderLayoutElements() {
                 <div class="coords" id="${uniqueId}">${safeCoords}</div>
                 <div class="btn-group">
                     <button class="btn-copy" onclick="copyCoords('${uniqueId}', this)">Copy Coords</button>
+                    <button class="btn-edit-item" style="${editStyle} margin-left: 8px; background-color: #f39c12; color: white;" onclick="startEditingLocation(${index})">Edit</button>
                 </div>
                 <button class="btn-delete" style="${deleteStyle}" onclick="deleteLocationFromCloud(${index})">✕</button>
             </div>`;
             
-        container.insertAdjacentHTML('beforeend', cardHtml);
+        listContainer.insertAdjacentHTML('beforeend', cardHtml);
     });
-    
+
+    attachAccordionClickListeners();
+    startSystemLiveClocks();
+
     const dashboard = document.getElementById('dashboard-panel');
     if (isAdminMode && dashboard) dashboard.style.display = 'block';
 }
 
-function promptAdminLogin() {
-    if (isAdminMode) {
-        if (confirm("Log out of Admin Dashboard mode?")) {
-            localStorage.removeItem('pogo_admin_token');
-            localStorage.removeItem(`gist_etag_${GIST_ID}`);
-            location.reload();
-        }
-        return;
+function addNewCategoryToCloud() {
+    if (!isAdminMode) return;
+    const rawCode = document.getElementById('new-country-code')?.value.trim();
+    const zoneInput = document.getElementById('new-country-timezone')?.value.trim();
+
+    if (!rawCode || !zoneInput) { 
+        alert("Please complete Code and Timezone fields."); 
+        return; 
     }
-    const token = prompt("Enter your GitHub Personal Access Token (PAT):");
-    if (token && token.trim()) {
-        localStorage.setItem('pogo_admin_token', token.trim());
-        location.reload();
-    }
+
+    const codeInput = rawCode.toLowerCase();
+    const labelInput = rawCode.toUpperCase();
+
+    const exists = cloudDatabasePayload.categories.some(c => c.code === codeInput);
+    if (exists) { alert("This category key code already exists!"); return; }
+
+    cloudDatabasePayload.categories.push({
+        code: codeInput,
+        label: labelInput,
+        zone: zoneInput,
+        flag: "" 
+    });
+
+    document.getElementById('new-country-code').value = '';
+    document.getElementById('new-country-timezone').value = '';
+
+    syncDataToGithubGist();
 }
 
-// Writes system mutations back to GitHub utilizing modern Bearer OAuth headers
 async function syncDataToGithubGist() {
     const btn = document.getElementById('submit-btn');
     if (btn) {
@@ -478,27 +506,69 @@ async function syncDataToGithubGist() {
             headers: {
                 'Authorization': `Bearer ${userGithubToken}`, 
                 'X-GitHub-Api-Version': '2022-11-28',
-                'Accept': 'application/vnd.github+json',
+                'Accept': 'application/vnd.github.v3+json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                files: { "hotspots.json": { content: JSON.stringify(globalHotspotsArray, null, 2) } }
+                files: { "hotspots.json": { content: JSON.stringify(cloudDatabasePayload, null, 2) } }
             })
         });
 
-        if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-        
-        localStorage.removeItem(`gist_etag_${GIST_ID}`);
-        alert("Success! Coordinates successfully updated across the global cloud framework.");
+        if (!response.ok) throw new Error("Sync failed");
+        alert("Success! Cloud database framework successfully synced globally.");
         location.reload();
     } catch (error) {
-        alert("Error syncing to cloud! Double check your GitHub token permissions.");
-        console.error(error);
+        alert("Error syncing to cloud! Verify your GitHub Token permissions or scopes.");
         if (btn) {
             btn.disabled = false;
-            btn.innerText = "Save Directly to Cloud Website";
+            btn.innerText = currentEditingIndex !== null ? "Update Location in Cloud 🔄" : "Save Directly to Cloud Website";
         }
     }
+}
+
+function startEditingLocation(index) {
+    if (!isAdminMode) return;
+    
+    currentEditingIndex = index;
+    const item = cloudDatabasePayload.locations[index];
+
+    const inputCountry = document.getElementById('input-country');
+    const inputName = document.getElementById('input-name');
+    const inputCoords = document.getElementById('input-coords');
+    const panel = document.getElementById('dashboard-panel');
+
+    if (inputCountry) inputCountry.value = item.country;
+    if (inputName) inputName.value = item.name.replace(/^📍\s*/, '');
+    if (inputCoords) inputCoords.value = item.coords;
+
+    if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+
+    const btn = document.getElementById('submit-btn');
+    if (btn) {
+        btn.innerText = "Update Location in Cloud 🔄";
+        btn.style.backgroundColor = "#e67e22";
+    }
+
+    const cancelBtn = document.getElementById('cancel-edit-btn');
+    if (cancelBtn) cancelBtn.style.display = 'block';
+}
+
+function cancelEditing() {
+    currentEditingIndex = null;
+    
+    const inputName = document.getElementById('input-name');
+    const inputCoords = document.getElementById('input-coords');
+    if (inputName) inputName.value = '';
+    if (inputCoords) inputCoords.value = '';
+    
+    const btn = document.getElementById('submit-btn');
+    if (btn) {
+        btn.innerText = "Save Directly to Cloud Website";
+        btn.style.backgroundColor = "#2e4f4f";
+    }
+
+    const cancelBtn = document.getElementById('cancel-edit-btn');
+    if (cancelBtn) cancelBtn.style.display = 'none';
 }
 
 function addLocationToCloud() {
@@ -509,59 +579,90 @@ function addLocationToCloud() {
 
     if (!name || !coords) { alert("Please input name and coords."); return; }
 
-    globalHotspotsArray.push({ country, name, coords });
+    if (currentEditingIndex !== null) {
+        cloudDatabasePayload.locations[currentEditingIndex] = { country, name, coords };
+        currentEditingIndex = null;
+    } else {
+        cloudDatabasePayload.locations.push({ country, name, coords });
+    }
+
     syncDataToGithubGist();
 }
 
 function deleteLocationFromCloud(index) {
     if (!isAdminMode) return;
     if (confirm("Permanently delete this item for everyone in the chat?")) {
-        globalHotspotsArray.splice(index, 1);
+        if (currentEditingIndex === index) {
+            cancelEditing();
+        } else if (currentEditingIndex !== null && index < currentEditingIndex) {
+            currentEditingIndex--; 
+        }
+        cloudDatabasePayload.locations.splice(index, 1);
         syncDataToGithubGist();
     }
 }
 
-// Live Clocks Framework - Structured Optimization
-const clockConfigs = [
-    { id: 'time-ph', zone: 'Asia/Manila' },
-    { id: 'time-jp', zone: 'Asia/Tokyo' },
-    { id: 'time-ae', zone: 'Asia/Dubai' },
-    { id: 'time-br', zone: 'America/Sao_Paulo' }
-];
-
-function updateClocks() {
-    const options = { hour: '2-digit', minute: '2-digit', hour12: true };
-    clockConfigs.forEach(cfg => {
-        const el = document.getElementById(cfg.id);
-        if (el) {
-            el.innerText = new Date().toLocaleTimeString('en-US', { ...options, timeZone: cfg.zone });
+function promptAdminLogin() {
+    if (isAdminMode) {
+        if (confirm("Log out of Admin Dashboard mode?")) {
+            localStorage.removeItem('pogo_admin_token');
+            location.reload();
         }
+        return;
+    }
+    const token = prompt("Enter your GitHub Personal Access Token (PAT) to activate Admin Mode:");
+    if (token && token.trim()) {
+        localStorage.setItem('pogo_admin_token', token.trim());
+        location.reload();
+    }
+}
+
+function startSystemLiveClocks() {
+    if (clockIntervalTracker) clearInterval(clockIntervalTracker);
+    
+    function runLoops() {
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        cloudDatabasePayload.categories.forEach(cfg => {
+            const el = document.getElementById(`time-${cfg.code}`);
+            if (el) {
+                el.innerText = new Date().toLocaleTimeString('en-US', { ...options, timeZone: cfg.zone });
+            }
+        });
+    }
+    clockIntervalTracker = setInterval(runLoops, 1000);
+    runLoops();
+}
+
+function attachAccordionClickListeners() {
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const item = header.parentElement;
+            const content = item?.querySelector('.accordion-content');
+            if (!item || !content) return;
+            
+            const isOpen = item.classList.contains('active');
+            
+            document.querySelectorAll('.accordion-item').forEach(i => { 
+                i.classList.remove('active'); 
+                const c = i.querySelector('.accordion-content');
+                if (c) c.style.maxHeight = null; 
+            });
+            
+            if (!isOpen) { 
+                item.classList.add('active'); 
+                content.style.maxHeight = content.scrollHeight + "px"; 
+            }
+        });
     });
 }
-setInterval(updateClocks, 1000);
-updateClocks();
 
-// Accordion Control Event Delegation Interface
-document.querySelectorAll('.accordion-header').forEach(header => {
-    header.addEventListener('click', () => {
-        const item = header.parentElement;
-        const content = item?.querySelector('.accordion-content');
-        if (!item || !content) return;
-        
-        const isOpen = item.classList.contains('active');
-        
-        document.querySelectorAll('.accordion-item').forEach(i => { 
-            i.classList.remove('active'); 
-            const c = i.querySelector('.accordion-content');
-            if (c) c.style.maxHeight = null; 
-        });
-        
-        if (!isOpen) { 
-            item.classList.add('active'); 
-            content.style.maxHeight = content.scrollHeight + "px"; 
-        }
-    });
-});
+function injectCancelElementStructure() {
+    if (!isAdminMode || document.getElementById('cancel-edit-btn')) return;
+    const submitBtn = document.getElementById('submit-btn');
+    if (!submitBtn) return;
+    const cancelBtnHtml = `<button type="button" id="cancel-edit-btn" onclick="cancelEditing()" style="display: none; background-color: #7f8c8d; color: white; width: 100%; padding: 12px; font-size: 15px; margin-top: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s;">Cancel Edit</button>`;
+    submitBtn.insertAdjacentHTML('afterend', cancelBtnHtml);
+}
 
 function copyCoords(id, button) {
     const el = document.getElementById(id);
@@ -577,8 +678,11 @@ function copyCoords(id, button) {
     });
 }
 
-// Initialize runtime pipelines
 loadCloudLocations();
+
+
 </script>
+
+
 </body>
 </html>
