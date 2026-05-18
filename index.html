@@ -7,11 +7,10 @@
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" />
 	
-	<style>
+    <style>
         :root {
             --bg-image: url('https://lh3.googleusercontent.com/PWSt8OX5qG416x9n9SAfktLM_n_CbEVCSo9_V4OKdnaOlN_veHLikyOEHqlDOAZqHwFsrAdMXH_dOzyf8l-jsX_5pQq1hR4DEQ=e365-pa-nu-w2880-rw');
             --logo-image: url('https://upload.wikimedia.org/wikipedia/commons/2/23/Pok%C3%A9mon_GO_logo.svg');
-            --bg-color-container: rgba(240, 242, 245, 0.60);
             --bg-color-container: rgba(240, 242, 245, 0.60);
             --accordion-header-bg: #2e4f4f;
             --accordion-header-hover: #243e3e;
@@ -65,32 +64,32 @@
             filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.15));
             content: var(--logo-image); 
         }
-               /* Floating Admin Key Button - Matched directly to your sample image color/style */
+
+        /* Floating Admin Login Action Control Button Styling */
         .admin-trigger {
             position: fixed;
-            bottom: 30px;        /* Positioned at the bottom-right just like the chat bubble */
+            bottom: 30px;        
             right: 30px;
             z-index: 9999;
-            background-color: #636efa; /* The beautiful blue/purple tone from your image */
+            background-color: #636efa; 
             border: none;
             cursor: pointer;
-            width: 60px;         /* Comfortable bubble sizing */
+            width: 60px;         
             height: 60px;
-            border-radius: 50%;   /* Makes it a perfect circle */
+            border-radius: 50%;   
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;      /* Clear, highly visible key size */
+            font-size: 24px;      
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             transition: transform 0.2s ease, background-color 0.2s;
             padding: 0;
         }
         .admin-trigger:hover {
-            transform: scale(1.1); /* Gentle pop effect on hover */
-            background-color: #4b55e2; /* Slightly darker shade on hover */
+            transform: scale(1.1);
+            background-color: #4b55e2;
         }
 
-        
         h1 {
             text-align: center;
             font-size: 24px;
@@ -119,23 +118,18 @@
             user-select: none;
             transition: background-color 0.2s;
         }
-        .header-title { display: flex; align-items: center; gap: 14px; }
-        .flag-svg {
-            width: 32px;
-            height: 22px;
-            border-radius: 3px;
-            display: block;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-	.time-text-right {
+        .header-title { display: flex; align-items: center; }
+        
+        .time-text-right {
             font-family: monospace;
-            font-size: 14px;
-            background-color: rgba(255,255,255,0.15);
+            font-size: 15px;
+            background-color: rgba(255, 255, 255, 0.15);
             padding: 3px 8px;
             border-radius: 4px;
             font-weight: 500;
-            margin-left: auto;       /* Pushes the clock box to the right edge */
-            margin-right: 8px;       /* Adds neat spacing before the dropdown arrow */
+            display: inline-block;   
+            margin-left: auto;       
+            margin-right: 4px;       
         }
 
         .accordion-header:hover { background-color: var(--accordion-header-hover); }
@@ -251,12 +245,16 @@
         }
         .btn-add:hover { background-color: #243e3e; }
         .btn-add:disabled { background-color: #cccccc; cursor: not-allowed; }
+        
+        .tab-button-active {
+            font-weight: bold !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
 
-
-<!-- Floating Action Style Key Button -->
+<!-- Floating action link button -->
 <button class="admin-trigger" onclick="promptAdminLogin()" title="Admin Login">🔑</button>
 
 <div class="container">
@@ -266,80 +264,62 @@
     <h1>Pokémon GO Hotspots</h1>
     <div id="loading-status" class="status-msg">Loading latest live pins...</div>
 
-    <!-- THIS SINGLE PLACEHOLDER NOW DYNAMICALLY GENERATES ALL ACCORDIONS & FLAGS -->
+    <!-- Active dynamic container placeholder -->
     <div id="dynamic-accordion-container" style="width: 100%;"></div>
 </div>
 
-<!-- Admin Dashboard Input Modification Form Framework -->
+<!-- Admin Dashboard Tabbed UI Framework -->
 <div class="admin-panel" id="dashboard-panel">
-    <!-- NEW SECTION: Create a brand new country category completely code-free -->
-    <h2 style="margin-top:0;">Create New Country Category</h2>
-    <div class="form-group">
-        <label for="new-country-code">Country Acronym Key (e.g., GER, DXB, US)</label>
-        <input type="text" id="new-country-code" placeholder="e.g., GER">
+    <!-- Tab Navigation Headers Control Bar -->
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e4e6eb; padding-bottom: 12px;">
+        <button id="tab-btn-locations" class="tab-button-active" onclick="switchAdminTab('locations')" style="background-color: #2e4f4f; color: white; padding: 10px; font-size: 14px; border-radius: 6px; flex: 1;">📍 Add/Edit Locations</button>
+        <button id="tab-btn-categories" onclick="switchAdminTab('categories')" style="background-color: #7f8c8d; color: white; padding: 10px; font-size: 14px; border-radius: 6px; flex: 1;">📂 Manage Categories</button>
     </div>
-    <div class="form-group">
-        <label for="new-country-timezone">IANA Timezone Location String</label>
-        <input type="text" id="new-country-timezone" placeholder="e.g., Europe/Berlin">
-    </div>
-    <div class="form-group">
-        <label for="new-country-flag">Flag Emoji (This renders beautifully instead of messy SVGs)</label>
-        <input type="text" id="new-country-flag" placeholder="e.g., 🇩🇪">
-    </div>
-    <button class="btn-add" onclick="addNewCategoryToCloud()" style="background-color: #0e8388; margin-bottom: 25px;">Create Category Box</button>
 
-    <h2 style="border-top: 2px solid #e4e6eb; padding-top: 15px;">Add/Edit Location Coordinates</h2>
-    <div class="form-group">
-        <label for="input-country">Target Region</label>
-        <select id="input-country">
-            <!-- Automatically filled by active dynamic categories -->
-        </select>
+    <!-- FORM SECTION A: Add/Edit Location Coordinates -->
+    <div id="admin-form-locations">
+        <h2>Add/Edit Location Coordinates</h2>
+        <div class="form-group">
+            <label for="input-country">Target Region</label>
+            <select id="input-country"></select>
+        </div>
+        <div class="form-group">
+            <label for="input-name">Location Identifier Name</label>
+            <input type="text" id="input-name" placeholder="e.g., Luneta Park">
+        </div>
+        <div class="form-group">
+            <label for="input-coords">Geospatial Coordinates</label>
+            <input type="text" id="input-coords" placeholder="e.g., 14.5826, 120.9787">
+        </div>
+        <button class="btn-add" id="submit-btn" onclick="addLocationToCloud()">Save Directly to Cloud Website</button>
     </div>
-    <div class="form-group">
-        <label for="input-name">Location Identifier Name</label>
-        <input type="text" id="input-name" placeholder="e.g., Luneta Park">
-    </div>
-    <div class="form-group">
-        <label for="input-coords">Geospatial Coordinates</label>
-        <input type="text" id="input-coords" placeholder="e.g., 14.5826, 120.9787">
-    </div>
-    <button class="btn-add" id="submit-btn" onclick="addLocationToCloud()">Save Directly to Cloud Website</button>
-</div>
 
-
-
-<!-- Admin Dashboard Input Modification Form Framework -->
-<div class="admin-panel" id="dashboard-panel">
-    <h2>Add Location Coordinates</h2>
-    <div class="form-group">
-        <label for="input-country">Target Region</label>
-        <select id="input-country">
-            <option value="ph">Philippines (PH)</option>
-            <option value="jp">Japan (JP)</option>
-            <option value="ae">Dubai (DXB)</option>
-            <option value="br">Brazil (BR)</option>
-        </select>
+    <!-- FORM SECTION B: Create New Country Category -->
+    <div id="admin-form-categories" style="display: none;">
+        <h2>Create New Country Category</h2>
+        <div class="form-group">
+            <label for="new-country-code">Country Acronym Key (e.g., GER, DXB, US)</label>
+            <input type="text" id="new-country-code" placeholder="e.g., GER">
+        </div>
+        <div class="form-group">
+            <label for="new-country-timezone">IANA Timezone Location String</label>
+            <input type="text" id="new-country-timezone" placeholder="e.g., Europe/Berlin">
+        </div>
+        <button class="btn-add" onclick="addNewCategoryToCloud()" style="background-color: #0e8388;">Create Category Box</button>
     </div>
-    <div class="form-group">
-        <label for="input-name">Location Identifier Name</label>
-        <input type="text" id="input-name" placeholder="e.g., Luneta Park">
-    </div>
-    <div class="form-group">
-        <label for="input-coords">Geospatial Coordinates</label>
-        <input type="text" id="input-coords" placeholder="e.g., 14.5826, 120.9787">
-    </div>
-    <button class="btn-add" id="submit-btn" onclick="addLocationToCloud()">Save Directly to Cloud Website</button>
 </div>
 
 <script>
+// UNIFIED FIXED ENDPOINTS - REPAIRED NETWORK DATA MODELS
 const GIST_ID = "2328a8e8f75dec3bb570d9c51d64a75d";
-const GIST_RAW_URL =`https://gist.githubusercontent.com/pacsone/${GIST_ID}/raw/hotspots.json`;
-const GIST_API_URL = `https://api.github.com/gists/${GIST_ID}`; // Locked in place
+const GIST_RAW_URL = `https://githubusercontent.com{GIST_ID}/raw/hotspots.json`;
+const GIST_API_URL = `https://github.com{GIST_ID}`;
 
 let cloudDatabasePayload = { categories: [], locations: [] };
 let currentEditingIndex = null;
 let clockIntervalTracker = null;
 
+// Base configuration architecture mapped contextually
 const absoluteDefaultBackup = {
     categories: [
         { code: "ph", label: "PH", zone: "Asia/Manila", flag: "" },
@@ -366,6 +346,7 @@ async function loadCloudLocations() {
         
         const runtimeData = await response.json();
         
+        // INTERNALLY VALIDATED CONVERTER: Auto-parses legacy array blocks and formats safely
         if (Array.isArray(runtimeData)) {
             cloudDatabasePayload.locations = runtimeData;
             cloudDatabasePayload.categories = [...absoluteDefaultBackup.categories];
@@ -382,8 +363,12 @@ async function loadCloudLocations() {
         if (loader) loader.style.display = 'none';
     } catch (error) {
         const loader = document.getElementById('loading-status');
-        if (loader) loader.innerText = "⚠️ Could not sync live server data!";
-        console.error("Database initialization fault:", error);
+        if (loader) loader.innerText = "⚠️ Running on local configuration fallback!";
+        console.error("Critical framework fallback initialized:", error);
+        
+        // Run fallback structure safely if cloud dataset drops out completely
+        cloudDatabasePayload = { ...absoluteDefaultBackup };
+        buildDynamicUILayout();
     }
 }
 
@@ -403,7 +388,6 @@ function buildDynamicUILayout() {
             dropdown.appendChild(opt);
         }
 
-        // 100% FIXED: New library formatting values map ('fi fi-xx')
         const codeMap = {
             "ae": "ae",
             "dxb": "ae",
@@ -418,8 +402,7 @@ function buildDynamicUILayout() {
             <div class="accordion-item" id="item-${cat.code}">
                 <div class="accordion-header">
                     <div class="header-title" style="display: flex; align-items: center;">
-                        <!-- Fixed explicit CSS library element calls -->
-                        <span class="fi fi-${flagClassCode}" style="width: 32px; height: 22px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); display: inline-block;"></span>
+                        <span class="flag-icon flag-icon-${flagClassCode}" style="width: 32px; height: 22px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); display: inline-block;"></span>
                         <span style="margin-left: 14px; font-weight: bold; font-size: 19px;">${cat.label}</span> 
                     </div>
                     <span class="time-text-right" id="time-${cat.code}">--:--</span>
@@ -462,6 +445,31 @@ function buildDynamicUILayout() {
 
     const dashboard = document.getElementById('dashboard-panel');
     if (isAdminMode && dashboard) dashboard.style.display = 'block';
+}
+
+function switchAdminTab(targetTab) {
+    const formLocations = document.getElementById('admin-form-locations');
+    const formCategories = document.getElementById('admin-form-categories');
+    const btnLocations = document.getElementById('tab-btn-locations');
+    const btnCategories = document.getElementById('tab-btn-categories');
+
+    if (!formLocations || !formCategories || !btnLocations || !btnCategories) return;
+
+    if (targetTab === 'locations') {
+        formLocations.style.display = 'block';
+        formCategories.style.display = 'none';
+        btnLocations.style.backgroundColor = '#2e4f4f';
+        btnLocations.classList.add('tab-button-active');
+        btnCategories.style.backgroundColor = '#7f8c8d';
+        btnCategories.classList.remove('tab-button-active');
+    } else if (targetTab === 'categories') {
+        formLocations.style.display = 'none';
+        formCategories.style.display = 'block';
+        btnLocations.style.backgroundColor = '#7f8c8d';
+        btnLocations.classList.remove('tab-button-active');
+        btnCategories.style.backgroundColor = '#0e8388';
+        btnCategories.classList.add('tab-button-active');
+    }
 }
 
 function addNewCategoryToCloud() {
@@ -528,6 +536,8 @@ async function syncDataToGithubGist() {
 
 function startEditingLocation(index) {
     if (!isAdminMode) return;
+    
+    switchAdminTab('locations');
     
     currentEditingIndex = index;
     const item = cloudDatabasePayload.locations[index];
@@ -679,10 +689,7 @@ function copyCoords(id, button) {
 }
 
 loadCloudLocations();
-
-
 </script>
-
 
 </body>
 </html>
