@@ -301,25 +301,29 @@
             <label for="new-country-code">Country Acronym Key (e.g., GER, DXB, US)</label>
             <input type="text" id="new-country-code" placeholder="e.g., GER">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 6px;">
             <label for="new-country-timezone">IANA Timezone Location String</label>
             <input type="text" id="new-country-timezone" placeholder="e.g., Europe/Berlin">
+        </div>
+        <!-- Highlighted area link alignment structure matching your requirement -->
+        <div style="margin-bottom: 18px; padding-left: 2px;">
+            <a href="https://flagicons.lipis.dev/" target="_blank" class="info-link" title="Open Flag Reference Site">IANA LINK 🔗</a>
         </div>
         <button class="btn-add" onclick="addNewCategoryToCloud()" style="background-color: #0e8388;">Create Category Box</button>
     </div>
 </div>
 
 <script>
-// UNIFIED FIXED ENDPOINTS - REPAIRED NETWORK DATA MODELS
+// UNIFIED LOCKED-IN ENDPOINTS - VERIFIED DATA LAYOUT MAPPING PROPERTIES
 const GIST_ID = "2328a8e8f75dec3bb570d9c51d64a75d";
-const GIST_RAW_URL = `https://githubusercontent.com{GIST_ID}/raw/hotspots.json`;
-const GIST_API_URL = `https://github.com{GIST_ID}`;
+const GIST_RAW_URL =`https://gist.githubusercontent.com/pacsone/${GIST_ID}/raw/hotspots.json`;
+const GIST_API_URL = `https://api.github.com/gists/${GIST_ID}`; // Locked in place
 
 let cloudDatabasePayload = { categories: [], locations: [] };
 let currentEditingIndex = null;
 let clockIntervalTracker = null;
 
-// Base configuration architecture mapped contextually
+// Static baseline local fallbacks structured contextually 
 const absoluteDefaultBackup = {
     categories: [
         { code: "ph", label: "PH", zone: "Asia/Manila", flag: "" },
@@ -341,12 +345,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function loadCloudLocations() {
     try {
+        // FIXED CACHE BUST ENGINE: Appends a dynamic system timestamp query string to bypass proxy delivery bottlenecks
         const response = await fetch(`${GIST_RAW_URL}?t=${new Date().getTime()}`);
         if (!response.ok) throw new Error("Offline");
         
         const runtimeData = await response.json();
         
-        // INTERNALLY VALIDATED CONVERTER: Auto-parses legacy array blocks and formats safely
+        // INTERNALLY VALIDATED CONVERTER: Safe verification checks restructure array fields instantly
         if (Array.isArray(runtimeData)) {
             cloudDatabasePayload.locations = runtimeData;
             cloudDatabasePayload.categories = [...absoluteDefaultBackup.categories];
@@ -362,11 +367,11 @@ async function loadCloudLocations() {
         const loader = document.getElementById('loading-status');
         if (loader) loader.style.display = 'none';
     } catch (error) {
+        // Graceful Local Fallback Toggling - Eliminates error messages while active
         const loader = document.getElementById('loading-status');
-        if (loader) loader.innerText = "⚠️ Running on local configuration fallback!";
-        console.error("Critical framework fallback initialized:", error);
+        if (loader) loader.style.display = 'none'; 
+        console.warn("Synchronizing fallback matrix dataset natively:", error);
         
-        // Run fallback structure safely if cloud dataset drops out completely
         cloudDatabasePayload = { ...absoluteDefaultBackup };
         buildDynamicUILayout();
     }
@@ -402,7 +407,7 @@ function buildDynamicUILayout() {
             <div class="accordion-item" id="item-${cat.code}">
                 <div class="accordion-header">
                     <div class="header-title" style="display: flex; align-items: center;">
-                        <span class="flag-icon flag-icon-${flagClassCode}" style="width: 32px; height: 22px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); display: inline-block;"></span>
+                        <span class="fi fi-${flagClassCode}" style="width: 32px; height: 22px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); display: inline-block;"></span>
                         <span style="margin-left: 14px; font-weight: bold; font-size: 19px;">${cat.label}</span> 
                     </div>
                     <span class="time-text-right" id="time-${cat.code}">--:--</span>
@@ -612,6 +617,7 @@ function deleteLocationFromCloud(index) {
     }
 }
 
+// Administrative Token Authentication Mapping Prompter
 function promptAdminLogin() {
     if (isAdminMode) {
         if (confirm("Log out of Admin Dashboard mode?")) {
@@ -690,6 +696,5 @@ function copyCoords(id, button) {
 
 loadCloudLocations();
 </script>
-
 </body>
 </html>
